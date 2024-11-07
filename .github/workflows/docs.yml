@@ -36,7 +36,7 @@ jobs:
     
     - name: Convert Postman to OpenAPI
       run: |
-        p2o ./Kickbase.postman_collection.json -f ./docs/openapi.yaml -e ./Kickbase.postman_environment.json
+        p2o ./Kickbase.postman_collection.json -f ./docs/openapi.yaml
         
     - name: Create index.html
       run: |
