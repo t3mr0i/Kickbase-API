@@ -21,6 +21,9 @@ jobs:
     - name: Install postman-to-openapi
       run: npm install -g postman-to-openapi
     
+    - name: Create docs directory
+      run: mkdir -p docs
+    
     - name: Convert Postman to OpenAPI
       run: |
         p2o ./Kickbase.postman_collection.json -f ./docs/openapi.yaml
