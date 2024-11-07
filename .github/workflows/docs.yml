@@ -96,161 +96,41 @@ jobs:
                     margin: 0;
                     padding: 0;
                     height: 100vh;
-                    font-family: 'Roboto', sans-serif;
-                }
-                #redoc, #login {
-                    height: 100%;
-                }
-                #login {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-                }
-                .login-container {
-                    background: rgba(255, 255, 255, 0.95);
-                    padding: 3rem;
-                    border-radius: 12px;
-                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-                    text-align: center;
-                    max-width: 400px;
-                    width: 90%;
-                }
-                .login-container h2 {
-                    color: #32329f;
-                    margin-bottom: 2rem;
-                    font-family: 'Montserrat', sans-serif;
-                    font-size: 1.8rem;
-                }
-                .login-container p {
-                    color: #666;
-                    margin-bottom: 2rem;
-                    line-height: 1.6;
-                }
-                .login-container input {
-                    display: block;
-                    margin: 1.5rem auto;
-                    padding: 1rem;
-                    width: 100%;
-                    border: 2px solid #e0e0e0;
-                    border-radius: 8px;
-                    font-size: 1rem;
-                    transition: border-color 0.3s ease;
-                    box-sizing: border-box;
-                }
-                .login-container input:focus {
-                    outline: none;
-                    border-color: #32329f;
-                }
-                .login-container button {
-                    width: 100%;
-                    padding: 1rem;
-                    background: #32329f;
-                    color: white;
-                    border: none;
-                    border-radius: 8px;
-                    cursor: pointer;
-                    font-size: 1rem;
-                    font-weight: 500;
-                    transition: all 0.3s ease;
-                    margin-top: 1rem;
-                }
-                .login-container button:hover {
-                    background: #26268f;
-                    transform: translateY(-1px);
-                    box-shadow: 0 4px 12px rgba(50, 50, 159, 0.2);
-                }
-                .login-container button:active {
-                    transform: translateY(0);
-                }
-                .error-message {
-                    color: #dc3545;
-                    margin-top: 1rem;
-                    font-size: 0.9rem;
-                    display: none;
-                }
-                .hidden {
-                    display: none !important;
                 }
             </style>
         </head>
         <body>
-            <div id="login">
-                <div class="login-container">
-                    <h2>Kickbase API Documentation</h2>
-                    <p>Welcome to the unofficial Kickbase API documentation. Please enter the access key to continue.</p>
-                    <input type="password" id="password" placeholder="Enter Access Key" autofocus>
-                    <div id="error-message" class="error-message">Incorrect access key. Please try again.</div>
-                    <button onclick="checkPassword()">Access Documentation</button>
-                </div>
-            </div>
-            <div id="redoc" class="hidden"></div>
+            <div id="redoc"></div>
             <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
             <script>
-                function checkPassword() {
-                    const password = document.getElementById('password').value;
-                    const errorMessage = document.getElementById('error-message');
-                    
-                    if (password === 'apiKey') {
-                        document.getElementById('login').classList.add('hidden');
-                        document.getElementById('redoc').classList.remove('hidden');
-                        errorMessage.style.display = 'none';
-                        
-                        Redoc.init('./openapi.yaml', {
-                            theme: {
-                                colors: {
-                                    primary: {
-                                        main: '#32329f'
-                                    }
-                                },
-                                typography: {
-                                    fontSize: '16px',
-                                    fontFamily: 'Roboto, sans-serif',
-                                    headings: {
-                                        fontFamily: 'Montserrat, sans-serif'
-                                    }
-                                },
-                                sidebar: {
-                                    width: '300px'
-                                }
-                            },
-                            expandResponses: '200',
-                            hideDownloadButton: false,
-                            hideLoading: false,
-                            nativeScrollbars: true,
-                            scrollYOffset: 50,
-                            sortPropsAlphabetically: true,
-                            requiredPropsFirst: true,
-                            showExtensions: true,
-                            pathInMiddlePanel: true
-                        }, document.getElementById('redoc'));
-
-                        sessionStorage.setItem('authenticated', 'true');
-                    } else {
-                        errorMessage.style.display = 'block';
-                        document.getElementById('password').value = '';
-                    }
-                }
-
-                if (sessionStorage.getItem('authenticated') === 'true') {
-                    document.getElementById('login').classList.add('hidden');
-                    document.getElementById('redoc').classList.remove('hidden');
-                    Redoc.init('./openapi.yaml', {
-                        theme: {
-                            colors: {
-                                primary: {
-                                    main: '#32329f'
-                                }
+                Redoc.init('./openapi.yaml', {
+                    theme: {
+                        colors: {
+                            primary: {
+                                main: '#32329f'
                             }
+                        },
+                        typography: {
+                            fontSize: '16px',
+                            fontFamily: 'Roboto, sans-serif',
+                            headings: {
+                                fontFamily: 'Montserrat, sans-serif'
+                            }
+                        },
+                        sidebar: {
+                            width: '300px'
                         }
-                    }, document.getElementById('redoc'));
-                }
-
-                document.getElementById('password').addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        checkPassword();
-                    }
-                });
+                    },
+                    expandResponses: '200',
+                    hideDownloadButton: false,
+                    hideLoading: false,
+                    nativeScrollbars: true,
+                    scrollYOffset: 50,
+                    sortPropsAlphabetically: true,
+                    requiredPropsFirst: true,
+                    showExtensions: true,
+                    pathInMiddlePanel: true
+                }, document.getElementById('redoc'));
             </script>
         </body>
         </html>
