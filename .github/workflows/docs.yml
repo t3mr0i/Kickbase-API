@@ -45,16 +45,28 @@ jobs:
         
     - name: Add OpenAPI metadata
       run: |
-        # Create header file
         cat > docs/openapi-header.yaml << 'EOL'
         openapi: 3.0.0
         info:
           title: Kickbase API Documentation
           description: |
+            # Kickbase API Documentation
             Unofficial documentation of the Kickbase API. This documentation provides a comprehensive overview of available endpoints.
             
             ## Authentication
             Most endpoints require authentication. Use the login endpoint to obtain a token.
+            
+            Example login request:
+            ```json
+            POST https://api.kickbase.com/v4/user/login
+            {
+              "ext": true,
+              "em": "your@mail.com",
+              "loy": false,
+              "pass": "yourpassword",
+              "rep": {}
+            }
+            ```
             
             ## Rate Limiting
             Please be mindful of rate limits when making requests.
@@ -97,6 +109,53 @@ jobs:
                     padding: 0;
                     height: 100vh;
                 }
+                /* Custom styles for ReDoc */
+                :root {
+                    --primary-color: #32329f;
+                    --text-color: #333333;
+                    --header-bg: #fafafa;
+                }
+                .api-info {
+                    margin: 0 0 20px 0;
+                }
+                .api-info h1 {
+                    color: var(--primary-color);
+                    font-size: 2em;
+                }
+                .api-info__description {
+                    font-size: 16px;
+                    line-height: 1.6;
+                }
+                .redoc-wrap {
+                    background-color: white;
+                }
+                .menu-content {
+                    background-color: var(--header-bg);
+                    border-right: 1px solid #e0e0e0;
+                }
+                .menu-item-title {
+                    color: var(--text-color);
+                }
+                .operation-type {
+                    border-radius: 3px;
+                    font-weight: 600;
+                }
+                .http-method {
+                    padding: 4px 8px;
+                    border-radius: 3px;
+                    font-weight: bold;
+                }
+                .response-title {
+                    font-weight: 600;
+                }
+                pre {
+                    background-color: #f5f5f5;
+                    border-radius: 4px;
+                    padding: 15px;
+                }
+                code {
+                    font-family: 'Monaco', 'Menlo', monospace;
+                }
             </style>
         </head>
         <body>
@@ -108,17 +167,35 @@ jobs:
                         colors: {
                             primary: {
                                 main: '#32329f'
+                            },
+                            success: {
+                                main: '#00aa13'
+                            },
+                            error: {
+                                main: '#e53935'
+                            },
+                            warning: {
+                                main: '#f5a623'
                             }
                         },
                         typography: {
                             fontSize: '16px',
                             fontFamily: 'Roboto, sans-serif',
                             headings: {
-                                fontFamily: 'Montserrat, sans-serif'
+                                fontFamily: 'Montserrat, sans-serif',
+                                fontWeight: '600'
+                            },
+                            code: {
+                                fontSize: '14px',
+                                fontFamily: 'Monaco, Menlo, monospace'
                             }
                         },
                         sidebar: {
-                            width: '300px'
+                            width: '300px',
+                            backgroundColor: '#fafafa'
+                        },
+                        rightPanel: {
+                            backgroundColor: '#263238'
                         }
                     },
                     expandResponses: '200',
@@ -129,7 +206,10 @@ jobs:
                     sortPropsAlphabetically: true,
                     requiredPropsFirst: true,
                     showExtensions: true,
-                    pathInMiddlePanel: true
+                    pathInMiddlePanel: true,
+                    expandSingleSchemaField: true,
+                    jsonSampleExpandLevel: 3,
+                    hideSingleRequestSampleTab: false
                 }, document.getElementById('redoc'));
             </script>
         </body>
