@@ -1,0 +1,31 @@
+name: Generate API Documentation
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    
+    - name: Install postmanerator
+      run: |
+        wget https://github.com/aubm/postmanerator/releases/download/v0.4.0/postmanerator_0.4.0_linux_amd64.tar.gz
+        tar -xzf postmanerator_0.4.0_linux_amd64.tar.gz
+        sudo mv postmanerator /usr/local/bin/
+    
+    - name: Generate Documentation
+      run: |
+        postmanerator -collection=Kickbase.postman_collection.json -output=./docs/index.html -environment=Kickbase.postman_environment.json
+    
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
+        cname: t3mr0i.github.io/newKickbaseApi

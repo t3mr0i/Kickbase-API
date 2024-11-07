@@ -1,0 +1,98 @@
+{
+  "info": {
+    "name": "Kickbase API",
+    "description": "Unofficial documentation of the Kickbase API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Account Settings",
+      "item": [
+        {
+          "name": "Delete Account",
+          "request": {
+            "method": "DELETE",
+            "url": "{{baseUrl}}/v4/user"
+          }
+        },
+        {
+          "name": "Edit Password",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/v4/user/password"
+          }
+        },
+        {
+          "name": "Get Account Settings",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/v4/user/settings"
+          }
+        },
+        {
+          "name": "Set Profile Image",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/v4/user/settings/image"
+          }
+        },
+        {
+          "name": "Update Account Settings",
+          "request": {
+            "method": "PUT",
+            "url": "{{baseUrl}}/v4/user/settings"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin Settings",
+      "item": [
+        {
+          "name": "Get League Settings",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/v4/leagues/{{leagueId}}/settings"
+          }
+        },
+        {
+          "name": "Get Managers",
+          "request": {
+            "method": "GET", 
+            "url": "{{baseUrl}}/v4/leagues/{{leagueId}}/settings/managers"
+          }
+        },
+        {
+          "name": "Reset League",
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/v4/leagues/{{leagueId}}/reset"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Base Section",
+      "item": [
+        {
+          "name": "Get Base Overview",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/v4/base/overview"
+          }
+        },
+        {
+          "name": "Get Section Items",
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/v4/base/sections/{{sectionId}}/items",
+            "query": [
+              {"key": "start", "value": "{{start}}"},
+              {"key": "max", "value": "{{max}}"}
+            ]
+          }
+        }
+      ]
+    }
+  ]
+} 
