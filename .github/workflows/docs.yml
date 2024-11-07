@@ -172,12 +172,6 @@ jobs:
                 .hidden {
                     display: none !important;
                 }
-                .loading {
-                    position: fixed;
-                    top: 50%;
-                    left: 50%;
-                    transform: translate(-50%, -50%);
-                }
             </style>
         </head>
         <body>
@@ -193,23 +187,11 @@ jobs:
             <div id="redoc" class="hidden"></div>
             <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
             <script>
-                // Hash for 'apiKey'
-                const CORRECT_PASSWORD_HASH = '2c52f6f3c1397e3d76217ed02c4e7857dd7c5e9664b7eb02c8ecd1af2d2d2207';
-                
-                async function sha256(message) {
-                    const msgBuffer = new TextEncoder().encode(message);
-                    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-                    const hashArray = Array.from(new Uint8Array(hashBuffer));
-                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                    return hashHex;
-                }
-
-                async function checkPassword() {
+                function checkPassword() {
                     const password = document.getElementById('password').value;
                     const errorMessage = document.getElementById('error-message');
-                    const hash = await sha256(password);
                     
-                    if (hash === CORRECT_PASSWORD_HASH) {
+                    if (password === 'apiKey') {
                         document.getElementById('login').classList.add('hidden');
                         document.getElementById('redoc').classList.remove('hidden');
                         errorMessage.style.display = 'none';
