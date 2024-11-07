@@ -38,8 +38,14 @@ jobs:
       run: |
         p2o ./Kickbase.postman_collection.json -f ./docs/openapi.yaml
         
+    - name: Install yq for YAML processing
+      run: |
+        sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
+        sudo chmod a+x /usr/local/bin/yq
+        
     - name: Add OpenAPI metadata
       run: |
+        # Create header file
         cat > docs/openapi-header.yaml << 'EOL'
         openapi: 3.0.0
         info:
@@ -63,8 +69,15 @@ jobs:
           - url: https://api.kickbase.com
             description: Production Server
         EOL
-        cat docs/openapi-header.yaml docs/openapi.yaml > docs/temp.yaml
-        mv docs/temp.yaml docs/openapi.yaml
+        
+        # Remove the openapi, info, and servers keys from the generated file
+        yq eval 'del(.openapi) | del(.info) | del(.servers)' docs/openapi.yaml > docs/openapi-content.yaml
+        
+        # Combine the files
+        cat docs/openapi-header.yaml docs/openapi-content.yaml > docs/openapi.yaml
+        
+        # Clean up temporary files
+        rm docs/openapi-header.yaml docs/openapi-content.yaml
         
     - name: Create index.html
       run: |
