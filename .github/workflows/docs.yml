@@ -38,6 +38,34 @@ jobs:
       run: |
         p2o ./Kickbase.postman_collection.json -f ./docs/openapi.yaml
         
+    - name: Add OpenAPI metadata
+      run: |
+        cat > docs/openapi-header.yaml << 'EOL'
+        openapi: 3.0.0
+        info:
+          title: Kickbase API Documentation
+          description: |
+            Unofficial documentation of the Kickbase API. This documentation provides a comprehensive overview of available endpoints.
+            
+            ## Authentication
+            Most endpoints require authentication. Use the login endpoint to obtain a token.
+            
+            ## Rate Limiting
+            Please be mindful of rate limits when making requests.
+            
+            ## Support
+            This is an unofficial documentation. For official support, please contact Kickbase directly.
+          version: 1.0.0
+          contact:
+            name: Kai Detmers
+            url: https://github.com/t3mr0i/Kickbase-API
+        servers:
+          - url: https://api.kickbase.com
+            description: Production Server
+        EOL
+        cat docs/openapi-header.yaml docs/openapi.yaml > docs/temp.yaml
+        mv docs/temp.yaml docs/openapi.yaml
+        
     - name: Create index.html
       run: |
         cat > docs/index.html << 'EOL'
@@ -47,66 +75,155 @@ jobs:
             <title>Kickbase API Documentation</title>
             <meta charset="utf-8"/>
             <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="description" content="Unofficial documentation of the Kickbase API">
             <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+            <link rel="icon" type="image/png" href="https://www.kickbase.com/assets/images/favicon.png">
             <style>
                 body {
                     margin: 0;
                     padding: 0;
                     height: 100vh;
                 }
-                #redoc {
+                #redoc, #login {
                     height: 100%;
                 }
-                .redoc-wrap {
-                    background-color: #ffffff;
+                #login {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background: #f5f5f5;
                 }
-                .api-content {
-                    padding: 20px;
+                .login-container {
+                    background: white;
+                    padding: 2rem;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    text-align: center;
                 }
-                .menu-content {
-                    background-color: #fafafa;
-                    border-right: 1px solid #e0e0e0;
+                .login-container h2 {
+                    color: #32329f;
+                    margin-bottom: 1.5rem;
                 }
-                .menu-item-title {
-                    color: #333333;
+                .login-container input {
+                    display: block;
+                    margin: 1rem 0;
+                    padding: 0.75rem;
+                    width: 250px;
+                    border: 1px solid #e0e0e0;
+                    border-radius: 4px;
+                    font-size: 1rem;
                 }
-                .operation-type {
-                    border-radius: 3px;
-                    padding: 5px 10px;
-                    margin-right: 10px;
+                .login-container button {
+                    width: 100%;
+                    padding: 0.75rem;
+                    background: #32329f;
+                    color: white;
+                    border: none;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    font-size: 1rem;
+                    transition: background-color 0.2s;
+                }
+                .login-container button:hover {
+                    background: #26268f;
+                }
+                .hidden {
+                    display: none !important;
+                }
+                .loading {
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
                 }
             </style>
         </head>
         <body>
-            <div id="redoc"></div>
+            <div id="login">
+                <div class="login-container">
+                    <h2>Kickbase API Documentation</h2>
+                    <input type="password" id="password" placeholder="Enter Password" autofocus>
+                    <button onclick="checkPassword()">Access Documentation</button>
+                </div>
+            </div>
+            <div id="redoc" class="hidden"></div>
             <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
             <script>
-                Redoc.init('./openapi.yaml', {
-                    theme: {
-                        colors: {
-                            primary: {
-                                main: '#32329f'
+                const CORRECT_PASSWORD_HASH = 'b1f4f9a523e36fd969f4573e25af4540ba5aea4e4c5ace0630bb44c650230e83';
+                
+                async function sha256(message) {
+                    const msgBuffer = new TextEncoder().encode(message);
+                    const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+                    const hashArray = Array.from(new Uint8Array(hashBuffer));
+                    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+                    return hashHex;
+                }
+
+                async function checkPassword() {
+                    const password = document.getElementById('password').value;
+                    const hash = await sha256(password);
+                    
+                    if (hash === CORRECT_PASSWORD_HASH) {
+                        document.getElementById('login').classList.add('hidden');
+                        document.getElementById('redoc').classList.remove('hidden');
+                        
+                        Redoc.init('./openapi.yaml', {
+                            theme: {
+                                colors: {
+                                    primary: {
+                                        main: '#32329f'
+                                    }
+                                },
+                                typography: {
+                                    fontSize: '16px',
+                                    fontFamily: 'Roboto, sans-serif',
+                                    headings: {
+                                        fontFamily: 'Montserrat, sans-serif'
+                                    }
+                                },
+                                sidebar: {
+                                    width: '300px'
+                                }
+                            },
+                            expandResponses: '200',
+                            hideDownloadButton: false,
+                            hideLoading: false,
+                            nativeScrollbars: true,
+                            scrollYOffset: 50,
+                            sortPropsAlphabetically: true,
+                            requiredPropsFirst: true,
+                            showExtensions: true,
+                            pathInMiddlePanel: true
+                        }, document.getElementById('redoc'));
+
+                        // Store auth state
+                        sessionStorage.setItem('authenticated', 'true');
+                    } else {
+                        alert('Incorrect password');
+                    }
+                }
+
+                // Check if already authenticated
+                if (sessionStorage.getItem('authenticated') === 'true') {
+                    document.getElementById('login').classList.add('hidden');
+                    document.getElementById('redoc').classList.remove('hidden');
+                    Redoc.init('./openapi.yaml', {
+                        theme: {
+                            colors: {
+                                primary: {
+                                    main: '#32329f'
+                                }
                             }
-                        },
-                        typography: {
-                            fontSize: '16px',
-                            fontFamily: 'Roboto, sans-serif',
-                            headings: {
-                                fontFamily: 'Montserrat, sans-serif'
-                            }
-                        },
-                        sidebar: {
-                            width: '300px'
                         }
-                    },
-                    expandResponses: '200',
-                    hideDownloadButton: true,
-                    hideLoading: true,
-                    nativeScrollbars: true,
-                    scrollYOffset: 50,
-                    sortPropsAlphabetically: true,
-                    requiredPropsFirst: true
-                }, document.getElementById('redoc'));
+                    }, document.getElementById('redoc'));
+                }
+
+                // Allow Enter key to submit
+                document.getElementById('password').addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        checkPassword();
+                    }
+                });
             </script>
         </body>
         </html>
