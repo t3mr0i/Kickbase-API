@@ -13,15 +13,24 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     
-    - name: Install postmanerator
-      run: |
-        wget https://github.com/aubm/postmanerator/releases/download/v0.4.0/postmanerator_0.4.0_linux_amd64.tar.gz
-        tar -xzf postmanerator_0.4.0_linux_amd64.tar.gz
-        sudo mv postmanerator /usr/local/bin/
+    - name: Setup Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '16'
     
-    - name: Generate Documentation
+    - name: Install postman-to-openapi
+      run: npm install -g postman-to-openapi
+    
+    - name: Convert Postman to OpenAPI
       run: |
-        postmanerator -collection=Kickbase.postman_collection.json -output=./docs/index.html -environment=Kickbase.postman_environment.json
+        p2o ./Kickbase.postman_collection.json -f ./docs/openapi.yaml
+    
+    - name: Install Redoc CLI
+      run: npm install -g @redocly/cli
+    
+    - name: Generate HTML Documentation
+      run: |
+        redocly build-docs ./docs/openapi.yaml -o ./docs/index.html
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
