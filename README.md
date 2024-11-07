@@ -4,7 +4,7 @@ This repository contains unofficial documentation of the Kickbase API. This work
 
 ## Documentation
 
-You can view the API documentation at [https://t3mr0i.github.io/newKickbaseApi](https://t3mr0i.github.io/newKickbaseApi)
+You can view the API documentation at [https://t3mr0i.github.io/Kickbase-API](https://t3mr0i.github.io/Kickbase-API)
 
 ## Generate Documentation
 
