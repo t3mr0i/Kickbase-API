@@ -24,19 +24,38 @@ jobs:
     - name: Install postman-to-openapi
       run: npm install -g postman-to-openapi
     
-    - name: Create docs directory
-      run: mkdir -p docs
+    - name: Create docs directory and files
+      run: |
+        mkdir -p docs
+        touch docs/.nojekyll
     
     - name: Convert Postman to OpenAPI
       run: |
         p2o ./Kickbase.postman_collection.json -f ./docs/openapi.yaml
-    
-    - name: Install Redoc CLI
-      run: npm install -g @redocly/cli
-    
-    - name: Generate HTML Documentation
+        
+    - name: Create index.html
       run: |
-        redocly build-docs ./docs/openapi.yaml -o ./docs/index.html
+        cat > docs/index.html << 'EOL'
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Kickbase API Documentation</title>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                }
+            </style>
+        </head>
+        <body>
+            <redoc spec-url="./openapi.yaml"></redoc>
+            <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
+        </body>
+        </html>
+        EOL
     
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
