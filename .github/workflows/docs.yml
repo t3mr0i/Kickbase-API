@@ -52,6 +52,28 @@ jobs:
                 body {
                     margin: 0;
                     padding: 0;
+                    height: 100vh;
+                }
+                #redoc {
+                    height: 100%;
+                }
+                .redoc-wrap {
+                    background-color: #ffffff;
+                }
+                .api-content {
+                    padding: 20px;
+                }
+                .menu-content {
+                    background-color: #fafafa;
+                    border-right: 1px solid #e0e0e0;
+                }
+                .menu-item-title {
+                    color: #333333;
+                }
+                .operation-type {
+                    border-radius: 3px;
+                    padding: 5px 10px;
+                    margin-right: 10px;
                 }
             </style>
         </head>
@@ -60,7 +82,30 @@ jobs:
             <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
             <script>
                 Redoc.init('./openapi.yaml', {
-                    scrollYOffset: 50
+                    theme: {
+                        colors: {
+                            primary: {
+                                main: '#32329f'
+                            }
+                        },
+                        typography: {
+                            fontSize: '16px',
+                            fontFamily: 'Roboto, sans-serif',
+                            headings: {
+                                fontFamily: 'Montserrat, sans-serif'
+                            }
+                        },
+                        sidebar: {
+                            width: '300px'
+                        }
+                    },
+                    expandResponses: '200',
+                    hideDownloadButton: true,
+                    hideLoading: true,
+                    nativeScrollbars: true,
+                    scrollYOffset: 50,
+                    sortPropsAlphabetically: true,
+                    requiredPropsFirst: true
                 }, document.getElementById('redoc'));
             </script>
         </body>
