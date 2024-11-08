@@ -6,124 +6,206 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #32329f;
+            --secondary-color: #454545;
+            --background-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --header-bg: #f5f5f5;
+            --sidebar-bg: #fafafa;
+            --code-bg: #f6f8fa;
+        }
+
+        [data-theme='dark'] {
+            --primary-color: #6e6ed9;
+            --secondary-color: #c5c5c5;
+            --background-color: #1a1a1a;
+            --text-color: #ffffff;
+            --border-color: #2d2d2d;
+            --header-bg: #2a2a2a;
+            --sidebar-bg: #252525;
+            --code-bg: #2d2d2d;
+        }
+
         body {
             margin: 0;
             padding: 0;
             font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
             transition: all 0.3s ease;
         }
-        
-        .header {
-            padding: 20px;
-            background: var(--header-bg);
+
+        .layout {
             display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: var(--header-bg);
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
             position: sticky;
             top: 0;
             z-index: 1000;
         }
 
-        .nav-tabs {
+        .header-left {
             display: flex;
-            gap: 10px;
-            margin-left: 20px;
+            align-items: center;
+            gap: 1rem;
         }
 
-        .nav-tab {
-            padding: 8px 16px;
-            cursor: pointer;
-            background: var(--primary-color);
-            color: white;
+        .header-right {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .theme-toggle, .export-button {
+            padding: 0.5rem 1rem;
             border: none;
             border-radius: 4px;
-            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            background: var(--primary-color);
+            color: white;
         }
 
-        .nav-tab.active {
-            background: var(--primary-dark);
+        .theme-toggle:hover, .export-button:hover {
+            opacity: 0.9;
         }
 
-        .content {
+        .main-content {
             display: flex;
-            height: calc(100vh - 80px);
-        }
-
-        .content > div {
-            display: none;
-            width: 100%;
-            height: 100%;
-        }
-
-        .content > div.active {
-            display: block;
+            flex: 1;
+            position: relative;
         }
 
         #redoc-container {
-            height: 100%;
-        }
-
-        #postman-container {
-            padding: 20px;
+            flex: 1;
+            height: calc(100vh - 64px);
             overflow: auto;
         }
 
-        .download-section {
-            margin-bottom: 20px;
+        /* ReDoc Customization */
+        ::ng-deep .redoc-wrap {
+            background-color: var(--background-color) !important;
         }
 
-        .download-button {
-            display: inline-block;
-            padding: 10px 20px;
-            background: var(--primary-color);
+        ::ng-deep .menu-content {
+            background-color: var(--sidebar-bg) !important;
+            border-right: 1px solid var(--border-color) !important;
+        }
+
+        ::ng-deep .api-info h1 {
+            color: var(--primary-color) !important;
+        }
+
+        ::ng-deep .operation-type {
+            border-radius: 4px !important;
+        }
+
+        .postman-section {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            background: var(--header-bg);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .postman-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #FF6C37;
             color: white;
             text-decoration: none;
             border-radius: 4px;
-            margin: 10px;
-            transition: all 0.3s ease;
+            font-weight: 500;
+            transition: all 0.2s ease;
         }
 
-        .download-button:hover {
-            background: var(--primary-dark);
+        .postman-button:hover {
+            opacity: 0.9;
         }
 
-        /* Theme variables */
-        :root {
-            --primary-color: #32329f;
-            --primary-dark: #0f0f2e;
-            --text-color: #333333;
-            --background-color: #ffffff;
-            --header-bg: #f5f5f5;
+        .postman-button img {
+            height: 20px;
         }
 
-        [data-theme='dark'] {
-            --primary-color: #6e6ed9;
-            --primary-dark: #32329f;
-            --text-color: #ffffff;
-            --background-color: #1a1a1a;
-            --header-bg: #2a2a2a;
-        }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 1rem;
+                padding: 0.5rem;
+            }
 
-        body.dark-mode {
-            background-color: var(--background-color);
-            color: var(--text-color);
+            .postman-section {
+                position: fixed;
+                bottom: 0;
+                right: 0;
+                left: 0;
+                border-radius: 0;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark Mode</button>
-        <div class="nav-tabs">
-            <button class="nav-tab active" onclick="showTab('docs')">API Documentation</button>
-            <button class="nav-tab" onclick="showTab('postman')">Postman Collection</button>
+    <div class="layout">
+        <header class="header">
+            <div class="header-left">
+                <h1>Kickbase API Documentation</h1>
+            </div>
+            <div class="header-right">
+                <button class="theme-toggle" onclick="toggleTheme()">
+                    <span class="theme-icon">🌓</span>
+                    <span class="theme-text">Toggle Theme</span>
+                </button>
+                <button class="export-button" onclick="showPostmanOptions()">
+                    Export to Postman
+                </button>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div id="redoc-container"></div>
+        </main>
+
+        <div class="postman-section" id="postman-section" style="display: none;">
+            <h3>Export Options</h3>
+            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="https://god.gw.postman.com/run-collection/28033934-c4f4c6e4-d0c4-4b61-a4f4-5e5c7c7b5b9e" 
+                   target="_blank" 
+                   class="postman-button">
+                    <img src="https://run.pstmn.io/button.svg" alt="Run in Postman">
+                    Run in Postman
+                </a>
+                <a href="Kickbase.postman_collection.json" 
+                   download 
+                   class="postman-button" 
+                   style="background: var(--primary-color)">
+                    Download Collection
+                </a>
+            </div>
         </div>
     </div>
 
-    <div class="content">
-        <div id="docs-container" class="active">
-            <redoc 
-                spec-url="openapi.yaml"
-                theme="{
+    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+    <script>
+        function initRedoc() {
+            Redoc.init('openapi.yaml', {
+                theme: {
                     colors: {
                         primary: { main: 'var(--primary-color)' },
                         text: { primary: 'var(--text-color)' }
@@ -133,66 +215,34 @@
                         headings: { fontFamily: 'Montserrat, sans-serif' }
                     },
                     sidebar: {
-                        backgroundColor: 'var(--background-color)'
+                        backgroundColor: 'var(--sidebar-bg)'
                     }
-                }"
-            ></redoc>
-        </div>
-        <div id="postman-container">
-            <div class="download-section">
-                <h2>Download Postman Collection</h2>
-                <p>Choose one of the following options to get started with the Kickbase API:</p>
-                <a href="https://god.gw.postman.com/run-collection/28033934-c4f4c6e4-d0c4-4b61-a4f4-5e5c7c7b5b9e?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D28033934-c4f4c6e4-d0c4-4b61-a4f4-5e5c7c7b5b9e%26entityType%3Dcollection%26workspaceId%3D437daeb3-c648-4e95-9c47-54f984217188" 
-                   target="_blank" 
-                   class="download-button">
-                    <img src="https://run.pstmn.io/button.svg" alt="Run in Postman">
-                </a>
-                <a href="Kickbase.postman_collection.json" 
-                   download 
-                   class="download-button">
-                    Download Collection File
-                </a>
-                <a href="Kickbase.postman_environment.json" 
-                   download 
-                   class="download-button">
-                    Download Environment File
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
-    <script>
-        function showTab(tabName) {
-            // Hide all containers
-            document.querySelectorAll('.content > div').forEach(div => div.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
-            
-            // Show selected container
-            document.getElementById(`${tabName}-container`).classList.add('active');
-            document.querySelector(`.nav-tab[onclick="showTab('${tabName}')"]`).classList.add('active');
+                },
+                expandResponses: '200',
+                hideDownloadButton: true,
+                nativeScrollbars: true,
+                pathInMiddlePanel: false
+            }, document.getElementById('redoc-container'));
         }
 
         function toggleTheme() {
-            const body = document.body;
-            const isDark = body.classList.toggle('dark-mode');
-            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-            
-            const redocElement = document.querySelector('redoc');
-            if (redocElement) {
-                redocElement.setAttribute('key', Date.now());
-            }
-
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            localStorage.setItem('theme', isDark ? 'light' : 'dark');
+            initRedoc();
         }
 
-        // Load saved theme preference
+        function showPostmanOptions() {
+            const section = document.getElementById('postman-section');
+            section.style.display = section.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Initialize theme
         document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme');
-            if (savedTheme === 'dark' || 
-                (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                toggleTheme();
-            }
+            const savedTheme = localStorage.getItem('theme') || 
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            initRedoc();
         });
     </script>
 </body>
