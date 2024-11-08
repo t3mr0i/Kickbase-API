@@ -9,11 +9,74 @@
         body {
             margin: 0;
             padding: 0;
+            font-family: 'Roboto', sans-serif;
+        }
+        
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        /* Custom ReDoc theme */
+        :root {
+            --primary-color: #32329f;
+            --primary-dark: #0f0f2e;
+            --text-color: #333333;
+            --background-color: #ffffff;
+            --header-bg: #f5f5f5;
+        }
+
+        /* Dark mode ReDoc theme */
+        [data-theme='dark'] {
+            --primary-color: #6e6ed9;
+            --primary-dark: #32329f;
+            --text-color: #ffffff;
+            --background-color: #1a1a1a;
+            --header-bg: #2a2a2a;
         }
     </style>
 </head>
 <body>
-    <redoc spec-url="./openapi.yaml"></redoc>
+    <div style="padding: 20px; background: var(--header-bg);">
+        <button onclick="toggleTheme()" style="padding: 8px 16px; cursor: pointer;">Toggle Dark Mode</button>
+        <a href="https://app.getpostman.com/run-collection/kickbase-api-collection" target="_blank">
+            <img src="https://run.pstmn.io/button.svg" alt="Run in Postman" style="margin-left: 10px; vertical-align: middle;">
+        </a>
+    </div>
+    <redoc 
+        spec-url="./openapi.yaml"
+        theme="{
+            colors: {
+                primary: { main: 'var(--primary-color)' },
+                text: { primary: 'var(--text-color)' }
+            },
+            typography: {
+                fontFamily: 'Roboto, sans-serif',
+                headings: { fontFamily: 'Montserrat, sans-serif' }
+            },
+            sidebar: {
+                backgroundColor: 'var(--background-color)'
+            }
+        }"
+    ></redoc>
     <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
+    <script>
+        // Theme toggle functionality
+        function toggleTheme() {
+            const body = document.body;
+            const isDark = body.classList.toggle('dark-mode');
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            
+            // Force ReDoc to update its theme
+            const redocElement = document.querySelector('redoc');
+            redocElement.setAttribute('key', Date.now());
+        }
+
+        // Check system preference for dark mode
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            toggleTheme();
+        }
+    </script>
 </body>
 </html> 
