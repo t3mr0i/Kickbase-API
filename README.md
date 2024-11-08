@@ -8,7 +8,7 @@ You can view the API documentation at [https://t3mr0i.github.io/Kickbase-API](ht
 
 ## Generate Documentation
 
-This API documentation is generated from a Postman collection using postmanerator. To generate the documentation:
+This API documentation is generated from a Postman collection. 
 
-1. Install postmanerator
-2. Generate the HTML documentation:
+The thank you goes to @kevinskyba for creating the original Postman collection.
+

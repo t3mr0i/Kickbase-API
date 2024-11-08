@@ -195,7 +195,10 @@ jobs:
                             backgroundColor: '#fafafa'
                         },
                         rightPanel: {
-                            backgroundColor: '#263238'
+                            backgroundColor: '#ffffff'
+                        },
+                        codeBlock: {
+                            backgroundColor: '#fafafa'
                         }
                     },
                     expandResponses: '200',
