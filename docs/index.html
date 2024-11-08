@@ -179,7 +179,7 @@
         </header>
 
         <main class="main-content">
-            <div id="redoc-container"></div>
+            <div id="redoc-container">Loading...</div>
         </main>
 
         <div class="postman-section" id="postman-section" style="display: none;">
@@ -203,8 +203,11 @@
 
     <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
     <script>
+        console.log('Script started');
+
         function initRedoc() {
-            Redoc.init('./openapi.yaml', {
+            console.log('Initializing ReDoc...');
+            Redoc.init('openapi.yaml', {
                 theme: {
                     colors: {
                         primary: { main: 'var(--primary-color)' },
@@ -221,13 +224,51 @@
                 expandResponses: '200',
                 hideDownloadButton: true,
                 nativeScrollbars: true,
-                pathInMiddlePanel: false
-            }, document.getElementById('redoc-container')).catch(error => {
+                pathInMiddlePanel: false,
+                scrollYOffset: 60
+            }, document.getElementById('redoc-container'))
+            .then(() => {
+                console.log('ReDoc initialized successfully');
+            })
+            .catch(error => {
                 console.error('Failed to initialize ReDoc:', error);
                 document.getElementById('redoc-container').innerHTML = 
-                    '<div style="padding: 20px; color: red;">Error loading API documentation. Please check the console for details.</div>';
+                    `<div style="padding: 20px; color: red;">
+                        Error loading API documentation: ${error.message}<br>
+                        Please check the console for details.
+                    </div>`;
             });
         }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM Content Loaded');
+            
+            const savedTheme = localStorage.getItem('theme') || 
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            
+            console.log('Fetching OpenAPI spec...');
+            fetch('openapi.yaml')
+                .then(response => {
+                    console.log('OpenAPI spec response:', response.status);
+                    if (!response.ok) {
+                        throw new Error(`Failed to load OpenAPI spec: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(spec => {
+                    console.log('OpenAPI spec loaded, length:', spec.length);
+                    initRedoc();
+                })
+                .catch(error => {
+                    console.error('Error loading OpenAPI spec:', error);
+                    document.getElementById('redoc-container').innerHTML = 
+                        `<div style="padding: 20px; color: red;">
+                            Failed to load API documentation: ${error.message}<br>
+                            Please ensure openapi.yaml is present and accessible.
+                        </div>`;
+                });
+        });
 
         function toggleTheme() {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -240,28 +281,6 @@
             const section = document.getElementById('postman-section');
             section.style.display = section.style.display === 'none' ? 'block' : 'none';
         }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme') || 
-                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            
-            fetch('./openapi.yaml')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Failed to load OpenAPI spec');
-                    }
-                    return response.text();
-                })
-                .then(() => {
-                    initRedoc();
-                })
-                .catch(error => {
-                    console.error('Error loading OpenAPI spec:', error);
-                    document.getElementById('redoc-container').innerHTML = 
-                        '<div style="padding: 20px; color: red;">Failed to load API documentation. Please ensure openapi.yaml is present.</div>';
-                });
-        });
     </script>
 </body>
 </html> 

@@ -154,3 +154,14 @@ jobs:
         echo "OpenAPI spec location:"
         pwd
         ls -la docs/
+
+    - name: Debug OpenAPI generation
+      run: |
+        echo "Current directory contents:"
+        ls -la
+        echo "\nDocs directory contents:"
+        ls -la docs/
+        echo "\nOpenAPI spec content:"
+        cat docs/openapi.yaml
+        echo "\nIndex.html content:"
+        cat docs/index.html
