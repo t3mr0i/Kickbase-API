@@ -54,6 +54,13 @@ jobs:
             # Kickbase API Documentation
             Unofficial documentation of the Kickbase API.
             
+            ## Competition IDs
+            The following competition IDs are available:
+            - 1: Bundesliga
+            - 2: 2. Bundesliga
+            - 3: La Liga
+            - 4: Google Pixel Frauen Bundesliga
+            
             ## Authentication
             Most endpoints require authentication via Bearer token.
             
@@ -70,34 +77,122 @@ jobs:
           - url: https://api.kickbase.com
             description: Production Server
         components:
-          securitySchemes:
-            bearerAuth:
-              type: http
-              scheme: bearer
           schemas:
-            Error:
+            Squad:
               type: object
               properties:
-                code:
+                it:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      mvgl:
+                        type: integer
+                        example: 7168491
+                      i:
+                        type: string
+                        example: "1991"
+                      n:
+                        type: string
+                        example: "Upamecano"
+                      pos:
+                        type: integer
+                        example: 2
+                      mv:
+                        type: integer
+                        example: 26721076
+                mppu:
                   type: integer
-                message:
+                  example: 17
+
+            PlayerDetails:
+              type: object
+              properties:
+                i:
                   type: string
-          parameters:
-            LeagueId:
-              name: leagueId
-              in: path
-              required: true
-              schema:
-                type: string
-            PlayerId:
-              name: playerId
-              in: path
-              required: true
-              schema:
-                type: string
-        security:
-          - bearerAuth: []
+                  example: "8329"
+                fn:
+                  type: string
+                  example: "Michael"
+                ln:
+                  type: string
+                  example: "Olise"
+                pos:
+                  type: integer
+                  example: 3
+                mv:
+                  type: integer
+                  example: 42912247
+
+            LeagueRanking:
+              type: object
+              properties:
+                ti:
+                  type: string
+                  example: "Tsubasa SüperLig"
+                us:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      n:
+                        type: string
+                        example: "Kai Dtmrs"
+                      sp:
+                        type: integer
+                        example: 9806
+                      tv:
+                        type: number
+                        example: 293136164.0
+
         paths:
+          /v4/leagues/{leagueId}/squad:
+            get:
+              summary: Get Squad
+              parameters:
+                - $ref: '#/components/parameters/LeagueId'
+              responses:
+                '200':
+                  description: Squad details
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/Squad'
+                      example:
+                        it:
+                          - mvgl: 7168491
+                            i: "1991"
+                            n: "Upamecano"
+                            pos: 2
+                            mv: 26721076
+                        mppu: 17
+
+          /v4/leagues/{leagueId}/players/{playerId}:
+            get:
+              summary: Get Player Details
+              parameters:
+                - $ref: '#/components/parameters/LeagueId'
+                - $ref: '#/components/parameters/PlayerId'
+              responses:
+                '200':
+                  description: Player details
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/PlayerDetails'
+
+          /v4/leagues/{leagueId}/ranking:
+            get:
+              summary: Get League Ranking
+              parameters:
+                - $ref: '#/components/parameters/LeagueId'
+              responses:
+                '200':
+                  description: League ranking
+                  content:
+                    application/json:
+                      schema:
+                        $ref: '#/components/schemas/LeagueRanking'
 EOL
 
         # Add paths separately to avoid duplication
