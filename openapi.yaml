@@ -1,38 +1,83 @@
 openapi: 3.0.0
 info:
+  title: Kickbase API Documentation
+  version: 1.0.0
+  description: |
+    # Kickbase API Documentation
+    Unofficial documentation of the Kickbase API.
+    
+    ## Competition IDs
+    - 1: Bundesliga
+    - 2: 2. Bundesliga
+    - 3: La Liga
+    - 4: Google Pixel Frauen Bundesliga
+  contact:
+    name: Kai Detmers
+    url: https://github.com/t3mr0i/Kickbase-API
+servers:
+  - url: https://api.kickbase.com
+    description: Production Server
+openapi: 3.0.0
+info:
   title: Kickbase API
-  description: Unofficial documentation of the Kickbase API
+  description: >-
+    [![Run in
+    Postman](https://run.pstmn.io/button.svg)](https://app.getpostman.com/run-collection/kickbase-api-collection)
+
+
+    Unofficial documentation of the Kickbase API
   version: 1.0.0
 servers:
   - url: http://{{baseurl}}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+security:
+  - bearerAuth: []
 tags:
-  - name: Account Settings
-  - name: Admin Settings
-  - name: Base Section
-  - name: Challenge Section
-  - name: Challenge Lineup
+  - name: Account & Authentication
+  - name: League Management
+  - name: Market & Players
+  - name: Competition
+  - name: Challenge
+  - name: Admin
   - name: Chat
-  - name: Competition Section
-  - name: Game Section
-  - name: General Section
-  - name: Play Section
-  - name: User Section
+  - name: Utility
+  - name: News
+  - name: Deprecated Endpoints
+    description: These endpoints are mostly deprecated but might still work
 paths:
-  /v4/user:
-    delete:
+  /v4/user/login:
+    post:
       tags:
-        - Account Settings
-      summary: Delete Account
+        - Account & Authentication
+      summary: Login
+      requestBody:
+        content: {}
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
-  /v4/user/password:
+  /v4/user/register:
     post:
       tags:
-        - Account Settings
-      summary: Edit Password
+        - Account & Authentication
+      summary: Register User
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/user/forgotpassword:
+    post:
+      tags:
+        - Account & Authentication
+      summary: Forgot Password
       requestBody:
         content: {}
       responses:
@@ -43,7 +88,7 @@ paths:
   /v4/user/settings:
     get:
       tags:
-        - Account Settings
+        - Account & Authentication
       summary: Get Account Settings
       responses:
         '200':
@@ -52,7 +97,7 @@ paths:
             application/json: {}
     put:
       tags:
-        - Account Settings
+        - Account & Authentication
       summary: Update Account Settings
       requestBody:
         content: {}
@@ -64,7 +109,7 @@ paths:
   /v4/user/settings/image:
     post:
       tags:
-        - Account Settings
+        - Account & Authentication
       summary: Set Profile Image
       requestBody:
         content: {}
@@ -73,10 +118,488 @@ paths:
           description: Successful response
           content:
             application/json: {}
+  /v4/user/password:
+    post:
+      tags:
+        - Account & Authentication
+      summary: Edit Password
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/user:
+    delete:
+      tags:
+        - Account & Authentication
+      summary: Delete Account
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues:
+    post:
+      tags:
+        - League Management
+      summary: Create League
+      requestBody:
+        content: {}
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/join:
+    post:
+      tags:
+        - League Management
+      summary: Join League
+      requestBody:
+        content: {}
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/join/{code}:
+    post:
+      tags:
+        - League Management
+      summary: Join Private League
+      requestBody:
+        content: {}
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: code
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/overview:
+    get:
+      tags:
+        - League Management
+      summary: Get League Preview Data
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/ranking:
+    get:
+      tags:
+        - League Management
+      summary: Get League Ranking
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/me:
+    get:
+      tags:
+        - League Management
+      summary: Get User League Info
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/activitiesFeed:
+    get:
+      tags:
+        - League Management
+      summary: Get League Activities Feed
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/invitations/{code}/validate:
+    get:
+      tags:
+        - League Management
+      summary: Validate Invitation Code
+      parameters:
+        - name: code
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/squad:
+    get:
+      tags:
+        - Market & Players
+      summary: Get Squad
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/players/{playerId}:
+    get:
+      tags:
+        - Market & Players
+      summary: Get Player Details
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: playerId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/players/{playerId}/performance:
+    get:
+      tags:
+        - Market & Players
+      summary: Get Player Performance
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: playerId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/market/overview:
+    get:
+      tags:
+        - Market & Players
+      summary: Get Market Overview
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/market/players:
+    get:
+      tags:
+        - Market & Players
+      summary: Get Market Players
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/market/{playerId}/buy:
+    post:
+      tags:
+        - Market & Players
+      summary: Buy Player
+      requestBody:
+        content: {}
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: playerId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/market/{playerId}/sell:
+    post:
+      tags:
+        - Market & Players
+      summary: Sell Player
+      requestBody:
+        content: {}
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: playerId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/leagues/{leagueId}/market/{playerId}/bid:
+    post:
+      tags:
+        - Market & Players
+      summary: Place Bid
+      requestBody:
+        content: {}
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: playerId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/competition/{competitionId}:
+    get:
+      tags:
+        - Competition
+      summary: Get Competition Data
+      parameters:
+        - name: competitionId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/competition/{competitionId}/matchday/{matchDayId}:
+    get:
+      tags:
+        - Competition
+      summary: Get Match Day Data
+      parameters:
+        - name: competitionId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: matchDayId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/matches/{matchId}/live:
+    get:
+      tags:
+        - Competition
+      summary: Get Live Match Data
+      parameters:
+        - name: matchId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/challenges/overview:
+    get:
+      tags:
+        - Challenge
+      summary: Get Challenge Overview
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/challenges/{challengeId}/join:
+    post:
+      tags:
+        - Challenge
+      summary: Join Challenge
+      requestBody:
+        content: {}
+      parameters:
+        - name: challengeId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/challenges/{challengeId}/profile:
+    get:
+      tags:
+        - Challenge
+      summary: Get Challenge Profile
+      parameters:
+        - name: challengeId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/challenges/{challengeId}/lineup:
+    get:
+      tags:
+        - Challenge
+      summary: Get Challenge Lineup
+      parameters:
+        - name: challengeId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    put:
+      tags:
+        - Challenge
+      summary: Update Challenge Lineup
+      requestBody:
+        content: {}
+      parameters:
+        - name: challengeId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/challenges/{challengeId}/lineup/livepitch:
+    get:
+      tags:
+        - Challenge
+      summary: Get Challenge Live Pitch
+      parameters:
+        - name: challengeId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/challenges/{challengeId}/lineup/clear:
+    post:
+      tags:
+        - Challenge
+      summary: Reset Challenge Lineup
+      requestBody:
+        content: {}
+      parameters:
+        - name: challengeId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
   /v4/leagues/{leagueId}/settings:
     get:
       tags:
-        - Admin Settings
+        - Admin
       summary: Get League Settings
       parameters:
         - name: leagueId
@@ -91,8 +614,8 @@ paths:
             application/json: {}
     post:
       tags:
-        - Admin Settings
-      summary: Save League Data
+        - Admin
+      summary: Save League Settings
       requestBody:
         content: {}
       parameters:
@@ -109,7 +632,7 @@ paths:
   /v4/leagues/{leagueId}/settings/managers:
     get:
       tags:
-        - Admin Settings
+        - Admin
       summary: Get Managers
       parameters:
         - name: leagueId
@@ -125,7 +648,7 @@ paths:
   /v4/leagues/{leagueId}/reset:
     post:
       tags:
-        - Admin Settings
+        - Admin
       summary: Reset League
       requestBody:
         content: {}
@@ -143,7 +666,7 @@ paths:
   /v4/leagues/{leagueId}/resetteams:
     post:
       tags:
-        - Admin Settings
+        - Admin
       summary: Reset Team
       requestBody:
         content: {}
@@ -161,7 +684,7 @@ paths:
   /v4/leagues/{leagueId}/users/{userId}/unlock:
     post:
       tags:
-        - Admin Settings
+        - Admin
       summary: Unlock Matchday Points
       requestBody:
         content: {}
@@ -172,227 +695,6 @@ paths:
             type: string
           required: true
         - name: userId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/base/overview:
-    get:
-      tags:
-        - Base Section
-      summary: Get Base Overview
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/base/sections/{sectionId}/items:
-    get:
-      tags:
-        - Base Section
-      summary: Get Base Section Items
-      parameters:
-        - name: sectionId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/base/items/{itemId}:
-    get:
-      tags:
-        - Base Section
-      summary: Get News Detail
-      parameters:
-        - name: itemId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/base/items/{itemId}/click:
-    post:
-      tags:
-        - Base Section
-      summary: Track News Item Clicked
-      requestBody:
-        content: {}
-      parameters:
-        - name: itemId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/challenges/favorites:
-    post:
-      tags:
-        - Challenge Section
-      summary: Add Manager To Favorites
-      requestBody:
-        content: {}
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/challenges/{challengeId}/profile:
-    get:
-      tags:
-        - Challenge Section
-      summary: Get Challenge Data
-      parameters:
-        - name: challengeId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/challenges/{challengeId}/table/{userId}:
-    get:
-      tags:
-        - Challenge Section
-      summary: Get Challenge Manager Profile
-      parameters:
-        - name: challengeId
-          in: path
-          schema:
-            type: string
-          required: true
-        - name: userId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/challenges/{challengeId}/table:
-    get:
-      tags:
-        - Challenge Section
-      summary: Get Challenge Overview
-      parameters:
-        - name: challengeId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/challenges/{challengeId}/favorites:
-    get:
-      tags:
-        - Challenge Section
-      summary: Get Favorite Managers
-      parameters:
-        - name: challengeId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/challenges/recommended:
-    get:
-      tags:
-        - Challenge Section
-      summary: Get Recommended Challenges
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/challenges/{challengeId}/join:
-    post:
-      tags:
-        - Challenge Section
-      summary: Join Challenge
-      requestBody:
-        content: {}
-      parameters:
-        - name: challengeId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/challenges/{challengeId}/lineup/fill:
-    post:
-      tags:
-        - Challenge Lineup
-      summary: Auto Fill Challenge Lineup
-      requestBody:
-        content: {}
-      parameters:
-        - name: challengeId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/challenges/{challengeId}/lineup/livepitch:
-    get:
-      tags:
-        - Challenge Lineup
-      summary: Get Challenge Live Pitch
-      parameters:
-        - name: challengeId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/challenges/{challengeId}/lineup/clear:
-    post:
-      tags:
-        - Challenge Lineup
-      summary: Reset Challenge Lineup
-      requestBody:
-        content: {}
-      parameters:
-        - name: challengeId
           in: path
           schema:
             type: string
@@ -422,155 +724,21 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /v4/competitions/{competitionId}/teams/{teamId}/teamcenter:
+  /v4/config:
     get:
       tags:
-        - Competition Section
-      summary: Get Club Center
-      parameters:
-        - name: competitionId
-          in: path
-          schema:
-            type: string
-          required: true
-        - name: teamId
-          in: path
-          schema:
-            type: string
-          required: true
+        - Utility
+      summary: Get App Configuration
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
-  /v4/competitions/{competitionId}/matchdays:
+  /v4/support/contactinfo:
     get:
       tags:
-        - Competition Section
-      summary: Get Competition Fixtures
-      parameters:
-        - name: competitionId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/competitions/{competitionId}/table:
-    get:
-      tags:
-        - Competition Section
-      summary: Get Competition Table
-      parameters:
-        - name: competitionId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/matches/{matchId}/details:
-    get:
-      tags:
-        - Competition Section
-      summary: Get Match Details
-      parameters:
-        - name: matchId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/leagues:
-    post:
-      tags:
-        - Game Section
-      summary: Create League
-      requestBody:
-        content: {}
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/leagues/{leagueId}/overview:
-    get:
-      tags:
-        - Game Section
-      summary: Get League Preview Data
-      parameters:
-        - name: leagueId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/leagues/{leagueId}/join:
-    post:
-      tags:
-        - Game Section
-      summary: Join League
-      requestBody:
-        content: {}
-      parameters:
-        - name: leagueId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/leagues/{leagueId}/join/{code}:
-    post:
-      tags:
-        - Game Section
-      summary: Join Private League
-      requestBody:
-        content: {}
-      parameters:
-        - name: leagueId
-          in: path
-          schema:
-            type: string
-          required: true
-        - name: code
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/invitations/{code}/validate:
-    get:
-      tags:
-        - Game Section
-      summary: Validate Invitation Code
-      parameters:
-        - name: code
-          in: path
-          schema:
-            type: string
-          required: true
+        - Utility
+      summary: Get Support Mail
       responses:
         '200':
           description: Successful response
@@ -579,18 +747,8 @@ paths:
   /v4/bonus/collect:
     get:
       tags:
-        - General Section
+        - Utility
       summary: Collect Daily Bonus
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/config:
-    get:
-      tags:
-        - General Section
-      summary: Get App Configuration
       responses:
         '200':
           description: Successful response
@@ -599,18 +757,209 @@ paths:
   /v4/live/eventtypes:
     get:
       tags:
-        - General Section
+        - Utility
       summary: Get Live Event Types
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
-  /v4/leagues/{leagueId}/me:
+  /v4/base/overview:
     get:
       tags:
-        - General Section
-      summary: Get User League Info
+        - News
+      summary: Get Base Overview
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/base/sections/{sectionId}/items:
+    get:
+      tags:
+        - News
+      summary: Get Base Section Items
+      parameters:
+        - name: sectionId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/base/items/{itemId}:
+    get:
+      tags:
+        - News
+      summary: Get News Detail
+      parameters:
+        - name: itemId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /v4/base/items/{itemId}/click:
+    post:
+      tags:
+        - News
+      summary: Track News Item Clicked
+      requestBody:
+        content: {}
+      parameters:
+        - name: itemId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /players/{playerId}/points:
+    get:
+      tags:
+        - Deprecated Endpoints
+      summary: Get Player Points (Old)
+      parameters:
+        - name: playerId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /live/top10:
+    get:
+      tags:
+        - Deprecated Endpoints
+      summary: Get Live Top 10 (Old)
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /leagues/{leagueId}/users/{userId}/stats:
+    get:
+      tags:
+        - Deprecated Endpoints
+      summary: Get User Stats (Old)
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: userId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /leagues/{leagueId}/users/{userId}/profile:
+    get:
+      tags:
+        - Deprecated Endpoints
+      summary: Get User Profile (Old)
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: userId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /leagues/{leagueId}/users/{userId}/players:
+    get:
+      tags:
+        - Deprecated Endpoints
+      summary: Get User Players (Old)
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: userId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /leagues/{leagueId}/users/{userId}/lineup:
+    get:
+      tags:
+        - Deprecated Endpoints
+      summary: Get User Lineup (Old)
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: userId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /leagues/{leagueId}/users/{userId}/feed:
+    get:
+      tags:
+        - Deprecated Endpoints
+      summary: Get User Feed (Old) - Filter 11
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: userId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /leagues/{leagueId}/stats:
+    get:
+      tags:
+        - Deprecated Endpoints
+      summary: Get League Stats (Old)
       parameters:
         - name: leagueId
           in: path
@@ -622,13 +971,11 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /v4/leagues/{leagueId}/market/{playerId}/sell:
-    post:
+  /leagues/{leagueId}/players/{playerId}/stats:
+    get:
       tags:
-        - Play Section
-      summary: Accept Kickbase Offer
-      requestBody:
-        content: {}
+        - Deprecated Endpoints
+      summary: Get Player Stats (Old)
       parameters:
         - name: leagueId
           in: path
@@ -645,11 +992,53 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /v4/leagues/{leagueId}/activitiesFeed:
+  /leagues/{leagueId}/players/{playerId}/feed:
     get:
       tags:
-        - Play Section
-      summary: Get League Activities Feed
+        - Deprecated Endpoints
+      summary: Get Player Feed (Old)
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: playerId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /leagues/{leagueId}/players/{playerId}:
+    get:
+      tags:
+        - Deprecated Endpoints
+      summary: Get Player Details (Old)
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: playerId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /leagues/{leagueId}/me:
+    get:
+      tags:
+        - Deprecated Endpoints
+      summary: Get League Me (Old)
       parameters:
         - name: leagueId
           in: path
@@ -661,11 +1050,11 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /v4/leagues/{leagueId}/ranking:
+  /leagues/{leagueId}/market:
     get:
       tags:
-        - Play Section
-      summary: Get League Ranking
+        - Deprecated Endpoints
+      summary: Get Market (Old)
       parameters:
         - name: leagueId
           in: path
@@ -677,18 +1066,18 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /v4/leagues/{leagueId}/managers/{managerId}/performance:
+  /leagues/{leagueId}/live/players/{playerId}:
     get:
       tags:
-        - Play Section
-      summary: Get Manager Performance
+        - Deprecated Endpoints
+      summary: Get Live Player Info (Old)
       parameters:
         - name: leagueId
           in: path
           schema:
             type: string
           required: true
-        - name: managerId
+        - name: playerId
           in: path
           schema:
             type: string
@@ -698,27 +1087,11 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /v4/leagues/{leagueId}/squad:
+  /leagues/{leagueId}/live/linedupplayers:
     get:
       tags:
-        - Play Section
-      summary: Get My Players
-      parameters:
-        - name: leagueId
-          in: path
-          schema:
-            type: string
-          required: true
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/leagues/{leagueId}/market:
-    get:
-      tags:
-        - Play Section
-      summary: Get Players On Transfer
+        - Deprecated Endpoints
+      summary: Get Lined Up Players (Old)
       parameters:
         - name: leagueId
           in: path
@@ -730,52 +1103,43 @@ paths:
           description: Successful response
           content:
             application/json: {}
-  /v4/user/login:
-    post:
-      tags:
-        - User Section
-      summary: Login
-      requestBody:
-        content:
-          '*/*':
-            schema:
-              type: string
-              example: >-
-                {"ext":true,"em":"{{email}}","loy":false,"pass":"{{password}}","rep":{}}
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/user/forgotpassword:
-    post:
-      tags:
-        - User Section
-      summary: Forgot Password
-      requestBody:
-        content: {}
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json: {}
-  /v4/support/contactinfo:
+  /leagues/{leagueId}/live:
     get:
       tags:
-        - User Section
-      summary: Get Support Mail
+        - Deprecated Endpoints
+      summary: Get Live Info (Old)
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
       responses:
         '200':
           description: Successful response
           content:
             application/json: {}
-  /v4/user/register:
-    post:
+  /leagues/{leagueId}/currentgift:
+    get:
       tags:
-        - User Section
-      summary: Register User
-      requestBody:
-        content: {}
+        - Deprecated Endpoints
+      summary: Get Current Gift (Old)
+      parameters:
+        - name: leagueId
+          in: path
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /competition/search:
+    get:
+      tags:
+        - Deprecated Endpoints
+      summary: Search Competition (Old)
       responses:
         '200':
           description: Successful response
