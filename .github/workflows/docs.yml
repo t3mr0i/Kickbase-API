@@ -45,41 +45,23 @@ jobs:
         
     - name: Add OpenAPI metadata
       run: |
-        cat > docs/openapi-header.yaml << 'EOL'
+        cat > docs/openapi.yaml << 'EOL'
         openapi: 3.0.0
         info:
           title: Kickbase API Documentation
           version: 1.0.0
           description: |
             # Kickbase API Documentation
-            Unofficial documentation of the Kickbase API. This documentation provides a comprehensive overview of available endpoints.
+            Unofficial documentation of the Kickbase API.
             
             ## Authentication
-            Most endpoints require authentication. Use the login endpoint to obtain a token.
+            Most endpoints require authentication via Bearer token.
             
             ### Required Headers
-            All requests must include:
             ```
             User-Agent: Kickbase/12.0.0
             Content-Type: application/json
             Accept: application/json
-            ```
-
-            For authenticated endpoints, also include:
-            ```
-            Authorization: Bearer <your-token>
-            ```
-            
-            ### Example Login Request
-            ```json
-            POST https://api.kickbase.com/v4/user/login
-            {
-              "ext": true,
-              "em": "your@mail.com",
-              "loy": false,
-              "pass": "yourpassword",
-              "rep": {}
-            }
             ```
           contact:
             name: Kai Detmers
@@ -92,34 +74,67 @@ jobs:
             bearerAuth:
               type: http
               scheme: bearer
-          headers:
-            UserAgent:
-              description: Required Kickbase User Agent
+          schemas:
+            Error:
+              type: object
+              properties:
+                code:
+                  type: integer
+                message:
+                  type: string
+          parameters:
+            LeagueId:
+              name: leagueId
+              in: path
+              required: true
               schema:
                 type: string
-                default: Kickbase/12.0.0
-            Accept:
-              description: Accept header
+            PlayerId:
+              name: playerId
+              in: path
+              required: true
               schema:
                 type: string
-                default: application/json
-            ContentType:
-              description: Content Type header
-              schema:
-                type: string
-                default: application/json
         security:
           - bearerAuth: []
         paths:
-        EOL
-        
-        # Create a temporary file for paths
-        echo "  # Account & Authentication" > docs/paths.yaml
-        yq eval 'del(.openapi) | del(.info) | del(.servers) | del(.components) | del(.security)' docs/openapi.yaml >> docs/paths.yaml
-        
-        # Combine files
-        cat docs/openapi-header.yaml docs/paths.yaml > docs/openapi.yaml
-        rm docs/openapi-header.yaml docs/paths.yaml
+EOL
+
+        # Add paths separately to avoid duplication
+        cat >> docs/openapi.yaml << 'EOL'
+          /v4/user/login:
+            post:
+              tags:
+                - Authentication
+              summary: Login
+              requestBody:
+                required: true
+                content:
+                  application/json:
+                    schema:
+                      type: object
+                      properties:
+                        ext:
+                          type: boolean
+                        em:
+                          type: string
+                        loy:
+                          type: boolean
+                        pass:
+                          type: string
+                        rep:
+                          type: object
+              responses:
+                '200':
+                  description: Successful login
+                  content:
+                    application/json:
+                      schema:
+                        type: object
+                        properties:
+                          token:
+                            type: string
+EOL
 
     # Prepare documentation files - Fixed version
     - name: Prepare documentation files
