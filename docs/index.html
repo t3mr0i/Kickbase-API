@@ -1,17 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Kickbase API Documentation for v4</title>
+    <title>Kickbase API Documentation</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="cache-control" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta http-equiv="pragma" content="no-cache" />
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
     <style>
         body {
             margin: 0;
             padding: 0;
             font-family: 'Roboto', sans-serif;
+            transition: all 0.3s ease;
         }
         
+        .header {
+            padding: 20px;
+            background: var(--header-bg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .theme-toggle {
+            padding: 8px 16px;
+            cursor: pointer;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary-dark);
+        }
+
         /* Dark mode styles */
         body.dark-mode {
             background-color: #1a1a1a;
@@ -35,17 +61,28 @@
             --background-color: #1a1a1a;
             --header-bg: #2a2a2a;
         }
+
+        .postman-button {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .postman-button img {
+            height: 32px;
+        }
     </style>
 </head>
 <body>
-    <div style="padding: 20px; background: var(--header-bg);">
-        <button onclick="toggleTheme()" style="padding: 8px 16px; cursor: pointer;">Toggle Dark Mode</button>
-        <a href="https://app.getpostman.com/run-collection/kickbase-api-collection" target="_blank">
-            <img src="https://run.pstmn.io/button.svg" alt="Run in Postman" style="margin-left: 10px; vertical-align: middle;">
+    <div class="header">
+        <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark Mode</button>
+        <a href="https://app.getpostman.com/run-collection/kickbase-api-collection" 
+           target="_blank" 
+           class="postman-button">
+            <img src="https://run.pstmn.io/button.svg" alt="Run in Postman">
         </a>
     </div>
     <redoc 
-        spec-url="./openapi.yaml"
+        spec-url="openapi.yaml"
         theme="{
             colors: {
                 primary: { main: 'var(--primary-color)' },
@@ -70,13 +107,37 @@
             
             // Force ReDoc to update its theme
             const redocElement = document.querySelector('redoc');
-            redocElement.setAttribute('key', Date.now());
+            if (redocElement) {
+                redocElement.setAttribute('key', Date.now());
+            }
+
+            // Save preference
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
 
-        // Check system preference for dark mode
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            toggleTheme();
-        }
+        // Load saved theme preference or system preference
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark' || 
+                (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                toggleTheme();
+            }
+        });
+
+        // Handle system theme changes
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+            if (!localStorage.getItem('theme')) {
+                if (e.matches) {
+                    if (!document.body.classList.contains('dark-mode')) {
+                        toggleTheme();
+                    }
+                } else {
+                    if (document.body.classList.contains('dark-mode')) {
+                        toggleTheme();
+                    }
+                }
+            }
+        });
     </script>
 </body>
 </html> 
