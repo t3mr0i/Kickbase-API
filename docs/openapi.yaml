@@ -2,7 +2,14 @@ openapi: 3.0.0
 info:
   title: Kickbase API Documentation
   version: 1.0.0
-  description: Unofficial documentation of the Kickbase API
+  description: |
+    Unofficial documentation of the Kickbase API.
+    
+    ## Competition IDs
+    - 1: Bundesliga
+    - 2: 2. Bundesliga
+    - 3: La Liga
+    - 4: Google Pixel Frauen Bundesliga
   contact:
     name: Kai Detmers
     url: https://github.com/t3mr0i/Kickbase-API
@@ -16,44 +23,128 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
-  parameters:
-    LeagueId:
-      name: leagueId
-      in: path
-      required: true
-      schema:
-        type: string
-    PlayerId:
-      name: playerId
-      in: path
-      required: true
-      schema:
-        type: string
+  schemas:
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+    PlayerBase:
+      type: object
+      properties:
+        i:
+          type: string
+          description: Player ID
+        n:
+          type: string
+          description: Player Name
+        pos:
+          type: integer
+          description: Position
+        mv:
+          type: integer
+          description: Market Value
+    Squad:
+      type: object
+      properties:
+        it:
+          type: array
+          items:
+            $ref: '#/components/schemas/PlayerBase'
+        mppu:
+          type: integer
+          description: Max Players Per User
 
 paths:
+  /v4/user/login:
+    post:
+      tags:
+        - Authentication
+      summary: Login to Kickbase
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ext:
+                  type: boolean
+                em:
+                  type: string
+                  description: Email
+                pass:
+                  type: string
+                  description: Password
+      responses:
+        '200':
+          description: Successful login
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+
   /v4/leagues/{leagueId}/squad:
     get:
+      tags:
+        - League
       summary: Get Squad
       parameters:
-        - $ref: '#/components/parameters/LeagueId'
+        - name: leagueId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: Squad details
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  it:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        mvgl:
-                          type: integer
-                        i:
-                          type: string
-                        n:
-                          type: string
-                  mppu:
-                    type: integer 
+                $ref: '#/components/schemas/Squad'
+              example:
+                it:
+                  - mvgl: 7168491
+                    i: "1991"
+                    n: "Upamecano"
+                    pos: 2
+                    mv: 26721076
+                mppu: 17
+
+  /v4/leagues/{leagueId}/players/{playerId}:
+    get:
+      tags:
+        - League
+      summary: Get Player Details
+      parameters:
+        - name: leagueId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: playerId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Player details
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/PlayerBase'
+                  - type: object
+                    properties:
+                      fn:
+                        type: string
+                        description: First Name
+                      ln:
+                        type: string
+                        description: Last Name
