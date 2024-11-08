@@ -55,8 +55,21 @@ jobs:
             
             ## Authentication
             Most endpoints require authentication. Use the login endpoint to obtain a token.
+
+            ### Required Headers
+            All requests must include:
+            ```
+            User-Agent: Kickbase/12.0.0
+            Content-Type: application/json
+            Accept: application/json
+            ```
+
+            For authenticated endpoints, also include:
+            ```
+            Authorization: Bearer <your-token>
+            ```
             
-            Example login request:
+            ### Example Login Request
             ```json
             POST https://api.kickbase.com/v4/user/login
             {
@@ -80,6 +93,33 @@ jobs:
         servers:
           - url: https://api.kickbase.com
             description: Production Server
+        components:
+          securitySchemes:
+            bearerAuth:
+              type: http
+              scheme: bearer
+              bearerFormat: JWT
+          headers:
+            UserAgent:
+              description: Required Kickbase User Agent
+              required: true
+              schema:
+                type: string
+                default: Kickbase/12.0.0
+            Accept:
+              description: Accept header
+              required: true
+              schema:
+                type: string
+                default: application/json
+            ContentType:
+              description: Content Type header
+              required: true
+              schema:
+                type: string
+                default: application/json
+        security:
+          - bearerAuth: []
         EOL
         
         yq eval 'del(.openapi) | del(.info) | del(.servers)' docs/openapi.yaml > docs/openapi-content.yaml
@@ -105,3 +145,12 @@ jobs:
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v2
+
+    # After the OpenAPI metadata step
+    - name: Verify OpenAPI spec
+      run: |
+        echo "Checking OpenAPI spec file..."
+        cat docs/openapi.yaml
+        echo "OpenAPI spec location:"
+        pwd
+        ls -la docs/
