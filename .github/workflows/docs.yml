@@ -1,4 +1,4 @@
-name: Generate API Documentation
+name: Deploy Documentation
 
 on:
   push:
@@ -6,46 +6,23 @@ on:
   pull_request:
     branches: [ main ]
 
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-
     steps:
     - uses: actions/checkout@v2
-    
-    - name: Setup Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '16'
-    
+
     - name: Install postman-to-openapi
       run: npm install -g postman-to-openapi
-    
-    - name: Create docs directory and files
+
+    - name: Convert Postman Collection to OpenAPI
       run: |
-        mkdir -p docs
-        touch docs/.nojekyll
-    
-    - name: Convert Postman to OpenAPI
-      run: |
-        p2o ./Kickbase.postman_collection.json -f ./docs/openapi.yaml
+        p2o ./docs/Kickbase.postman_collection.json -f ./docs/openapi.yaml
         
-    - name: Install yq for YAML processing
+    - name: Add OpenAPI metadata
       run: |
-        sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
-        sudo chmod a+x /usr/local/bin/yq
-        
-    - name: Create OpenAPI spec
-      run: |
-        cat > docs/openapi.yaml << 'EOL'
+        # Add any additional metadata or modifications to the OpenAPI spec
+        cat > ./docs/openapi-header.yaml << 'EOL'
         openapi: 3.0.0
         info:
           title: Kickbase API Documentation
@@ -55,138 +32,25 @@ jobs:
             Unofficial documentation of the Kickbase API.
             
             ## Competition IDs
-            The following competition IDs are available:
             - 1: Bundesliga
             - 2: 2. Bundesliga
             - 3: La Liga
             - 4: Google Pixel Frauen Bundesliga
-            
-            ## Authentication
-            Most endpoints require authentication via Bearer token.
-            
-            ### Required Headers
-            ```
-            User-Agent: Kickbase/12.0.0
-            Content-Type: application/json
-            Accept: application/json
-            ```
           contact:
             name: Kai Detmers
             url: https://github.com/t3mr0i/Kickbase-API
         servers:
           - url: https://api.kickbase.com
             description: Production Server
-        paths:
-          /v4/user/login:
-            post:
-              tags:
-                - Authentication
-              summary: Login
-              requestBody:
-                required: true
-                content:
-                  application/json:
-                    schema:
-                      type: object
-                      required:
-                        - ext
-                        - em
-                        - loy
-                        - pass
-                        - rep
-                      properties:
-                        ext:
-                          type: boolean
-                          example: true
-                        em:
-                          type: string
-                          example: "your@mail.com"
-                        loy:
-                          type: boolean
-                          example: false
-                        pass:
-                          type: string
-                          example: "yourpassword"
-                        rep:
-                          type: object
-                          example: {}
-              responses:
-                '200':
-                  description: Successful login
-                  content:
-                    application/json:
-                      schema:
-                        type: object
-                        properties:
-                          token:
-                            type: string
         EOL
+        
+        # Combine header with generated OpenAPI spec
+        cat ./docs/openapi-header.yaml ./docs/openapi.yaml > ./docs/openapi.temp.yaml
+        mv ./docs/openapi.temp.yaml ./docs/openapi.yaml
+        rm -f ./docs/openapi-header.yaml
 
-    - name: Create index.html
-      run: |
-        cat > docs/index.html << 'EOL'
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Kickbase API Documentation</title>
-            <meta charset="utf-8"/>
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
-            <style>
-                body {
-                    margin: 0;
-                    padding: 0;
-                    height: 100vh;
-                }
-            </style>
-        </head>
-        <body>
-            <div id="redoc"></div>
-            <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
-            <script>
-                Redoc.init('./openapi.yaml', {
-                    theme: {
-                        colors: {
-                            primary: {
-                                main: '#32329f'
-                            }
-                        },
-                        typography: {
-                            fontSize: '16px',
-                            fontFamily: 'Roboto, sans-serif',
-                            headings: {
-                                fontFamily: 'Montserrat, sans-serif'
-                            }
-                        },
-                        sidebar: {
-                            width: '300px'
-                        },
-                        rightPanel: {
-                            backgroundColor: '#ffffff'
-                        }
-                    },
-                    expandResponses: '200',
-                    hideDownloadButton: false,
-                    nativeScrollbars: true,
-                    scrollYOffset: 50,
-                    sortPropsAlphabetically: true,
-                    requiredPropsFirst: true,
-                    showExtensions: true,
-                    pathInMiddlePanel: true
-                }, document.getElementById('redoc'));
-            </script>
-        </body>
-        </html>
-        EOL
-        
-    - name: Setup Pages
-      uses: actions/configure-pages@v3
-        
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v2
-      with:
-        path: './docs'
-        
     - name: Deploy to GitHub Pages
-      id: deployment
-      uses: actions/deploy-pages@v2
+      uses: JamesIves/github-pages-deploy-action@4.1.4
+      with:
+        branch: gh-pages
+        folder: docs
