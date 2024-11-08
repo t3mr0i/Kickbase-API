@@ -82,143 +82,18 @@ jobs:
             description: Production Server
         EOL
         
-        # Remove the openapi, info, and servers keys from the generated file
         yq eval 'del(.openapi) | del(.info) | del(.servers)' docs/openapi.yaml > docs/openapi-content.yaml
-        
-        # Combine the files
         cat docs/openapi-header.yaml docs/openapi-content.yaml > docs/openapi.yaml
-        
-        # Clean up temporary files
         rm docs/openapi-header.yaml docs/openapi-content.yaml
-        
-    - name: Create index.html
-      run: |
-        cat > docs/index.html << 'EOL'
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Kickbase API Documentation</title>
-            <meta charset="utf-8"/>
-            <meta name="viewport" content="width=device-width, initial-scale=1">
-            <meta name="description" content="Unofficial documentation of the Kickbase API">
-            <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
-            <link rel="icon" type="image/png" href="https://www.kickbase.com/assets/images/favicon.png">
-            <style>
-                body {
-                    margin: 0;
-                    padding: 0;
-                    height: 100vh;
-                }
-                /* Custom styles for ReDoc */
-                :root {
-                    --primary-color: #32329f;
-                    --text-color: #333333;
-                    --header-bg: #fafafa;
-                }
-                .api-info {
-                    margin: 0 0 20px 0;
-                }
-                .api-info h1 {
-                    color: var(--primary-color);
-                    font-size: 2em;
-                }
-                .api-info__description {
-                    font-size: 16px;
-                    line-height: 1.6;
-                }
-                .redoc-wrap {
-                    background-color: white;
-                }
-                .menu-content {
-                    background-color: var(--header-bg);
-                    border-right: 1px solid #e0e0e0;
-                }
-                .menu-item-title {
-                    color: var(--text-color);
-                }
-                .operation-type {
-                    border-radius: 3px;
-                    font-weight: 600;
-                }
-                .http-method {
-                    padding: 4px 8px;
-                    border-radius: 3px;
-                    font-weight: bold;
-                }
-                .response-title {
-                    font-weight: 600;
-                }
-                pre {
-                    background-color: #f5f5f5;
-                    border-radius: 4px;
-                    padding: 15px;
-                }
-                code {
-                    font-family: 'Monaco', 'Menlo', monospace;
-                }
-            </style>
-        </head>
-        <body>
-            <div id="redoc"></div>
-            <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
-            <script>
-                Redoc.init('./openapi.yaml', {
-                    theme: {
-                        colors: {
-                            primary: {
-                                main: '#32329f'
-                            },
-                            success: {
-                                main: '#00aa13'
-                            },
-                            error: {
-                                main: '#e53935'
-                            },
-                            warning: {
-                                main: '#f5a623'
-                            }
-                        },
-                        typography: {
-                            fontSize: '16px',
-                            fontFamily: 'Roboto, sans-serif',
-                            headings: {
-                                fontFamily: 'Montserrat, sans-serif',
-                                fontWeight: '600'
-                            },
-                            code: {
-                                fontSize: '14px',
-                                fontFamily: 'Monaco, Menlo, monospace'
-                            }
-                        },
-                        sidebar: {
-                            width: '300px',
-                            backgroundColor: '#fafafa'
-                        },
-                        rightPanel: {
-                            backgroundColor: '#ffffff'
-                        },
-                        codeBlock: {
-                            backgroundColor: '#fafafa'
-                        }
-                    },
-                    expandResponses: '200',
-                    hideDownloadButton: false,
-                    hideLoading: false,
-                    nativeScrollbars: true,
-                    scrollYOffset: 50,
-                    sortPropsAlphabetically: true,
-                    requiredPropsFirst: true,
-                    showExtensions: true,
-                    pathInMiddlePanel: true,
-                    expandSingleSchemaField: true,
-                    jsonSampleExpandLevel: 3,
-                    hideSingleRequestSampleTab: false
-                }, document.getElementById('redoc'));
-            </script>
-        </body>
-        </html>
-        EOL
 
+    # Copy assets and ensure index.html is used
+    - name: Prepare documentation files
+      run: |
+        cp docs/index.html docs/index.html.bak
+        cp docs/Kickbase.postman_collection.json docs/
+        cp docs/openapi.yaml docs/
+        mv docs/index.html.bak docs/index.html
+        
     - name: Setup Pages
       uses: actions/configure-pages@v3
         
