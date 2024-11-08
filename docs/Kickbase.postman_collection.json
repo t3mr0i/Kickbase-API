@@ -446,14 +446,14 @@
             "description": "These endpoints are mostly deprecated but might still work",
             "item": [
                 {
-                    "name": "Get Player Points",
+                    "name": "Get Player Points (Old)",
                     "request": {
                         "method": "GET",
                         "url": "{{baseUrl}}/players/{{playerId}}/points"
                     }
                 },
                 {
-                    "name": "Get Live Top 10",
+                    "name": "Get Live Top 10 (Old)",
                     "request": {
                         "method": "GET",
                         "url": "{{baseUrl}}/live/top10",
@@ -494,7 +494,7 @@
                     }
                 },
                 {
-                    "name": "Get User Feed (Old)",
+                    "name": "Get User Feed (Old) - Page 50",
                     "request": {
                         "method": "GET",
                         "url": "{{baseUrl}}/leagues/{{leagueId}}/users/{{userId}}/feed",
@@ -502,6 +502,57 @@
                             {
                                 "key": "filter",
                                 "value": "12,2"
+                            },
+                            {
+                                "key": "start",
+                                "value": "50"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "Get User Feed (Old) - Page 25",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/leagues/{{leagueId}}/users/{{userId}}/feed",
+                        "query": [
+                            {
+                                "key": "filter",
+                                "value": "12,2"
+                            },
+                            {
+                                "key": "start",
+                                "value": "25"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "Get User Feed (Old) - Page 0",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/leagues/{{leagueId}}/users/{{userId}}/feed",
+                        "query": [
+                            {
+                                "key": "filter",
+                                "value": "12,2"
+                            },
+                            {
+                                "key": "start",
+                                "value": "0"
+                            }
+                        ]
+                    }
+                },
+                {
+                    "name": "Get User Feed (Old) - Filter 11",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/leagues/{{leagueId}}/users/{{userId}}/feed",
+                        "query": [
+                            {
+                                "key": "filter",
+                                "value": "11"
                             },
                             {
                                 "key": "start",
@@ -542,10 +593,38 @@
                     }
                 },
                 {
+                    "name": "Get Player Details (Old)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/leagues/{{leagueId}}/players/{{playerId}}"
+                    }
+                },
+                {
+                    "name": "Get League Me (Old)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/leagues/{{leagueId}}/me"
+                    }
+                },
+                {
                     "name": "Get Market (Old)",
                     "request": {
                         "method": "GET",
                         "url": "{{baseUrl}}/leagues/{{leagueId}}/market"
+                    }
+                },
+                {
+                    "name": "Get Live Player Info (Old)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/leagues/{{leagueId}}/live/players/{{playerId}}"
+                    }
+                },
+                {
+                    "name": "Get Lined Up Players (Old)",
+                    "request": {
+                        "method": "GET",
+                        "url": "{{baseUrl}}/leagues/{{leagueId}}/live/linedupplayers"
                     }
                 },
                 {
