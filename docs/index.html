@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Kickbase API Documentations</title>
+    <title>Kickbase API Documentation</title>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="cache-control" content="no-cache" />
-    <meta http-equiv="expires" content="0" />
-    <meta http-equiv="pragma" content="no-cache" />
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
     <style>
         body {
@@ -22,9 +19,18 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .theme-toggle {
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-left: 20px;
+        }
+
+        .nav-tab {
             padding: 8px 16px;
             cursor: pointer;
             background: var(--primary-color);
@@ -34,17 +40,54 @@
             transition: all 0.3s ease;
         }
 
-        .theme-toggle:hover {
+        .nav-tab.active {
             background: var(--primary-dark);
         }
 
-        /* Dark mode styles */
-        body.dark-mode {
-            background-color: #1a1a1a;
-            color: #ffffff;
+        .content {
+            display: flex;
+            height: calc(100vh - 80px);
         }
 
-        /* Custom ReDoc theme */
+        .content > div {
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        .content > div.active {
+            display: block;
+        }
+
+        #redoc-container {
+            height: 100%;
+        }
+
+        #postman-container {
+            padding: 20px;
+            overflow: auto;
+        }
+
+        .download-section {
+            margin-bottom: 20px;
+        }
+
+        .download-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .download-button:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Theme variables */
         :root {
             --primary-color: #32329f;
             --primary-dark: #0f0f2e;
@@ -53,7 +96,6 @@
             --header-bg: #f5f5f5;
         }
 
-        /* Dark mode ReDoc theme */
         [data-theme='dark'] {
             --primary-color: #6e6ed9;
             --primary-dark: #32329f;
@@ -62,85 +104,94 @@
             --header-bg: #2a2a2a;
         }
 
-        .postman-button {
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .postman-button img {
-            height: 32px;
+        body.dark-mode {
+            background-color: var(--background-color);
+            color: var(--text-color);
         }
     </style>
 </head>
 <body>
     <div class="header">
         <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark Mode</button>
-        <a href="https://god.gw.postman.com/run-collection/28033934-c4f4c6e4-d0c4-4b61-a4f4-5e5c7c7b5b9e?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D28033934-c4f4c6e4-d0c4-4b61-a4f4-5e5c7c7b5b9e%26entityType%3Dcollection%26workspaceId%3D437daeb3-c648-4e95-9c47-54f984217188" 
-           target="_blank" 
-           class="postman-button">
-            <img src="https://run.pstmn.io/button.svg" alt="Run in Postman">
-        </a>
-        <a href="Kickbase.postman_collection.json" 
-           download 
-           class="download-button">
-            Download Collection
-        </a>
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('docs')">API Documentation</button>
+            <button class="nav-tab" onclick="showTab('postman')">Postman Collection</button>
+        </div>
     </div>
-    <redoc 
-        spec-url="openapi.yaml"
-        theme="{
-            colors: {
-                primary: { main: 'var(--primary-color)' },
-                text: { primary: 'var(--text-color)' }
-            },
-            typography: {
-                fontFamily: 'Roboto, sans-serif',
-                headings: { fontFamily: 'Montserrat, sans-serif' }
-            },
-            sidebar: {
-                backgroundColor: 'var(--background-color)'
-            }
-        }"
-    ></redoc>
+
+    <div class="content">
+        <div id="docs-container" class="active">
+            <redoc 
+                spec-url="openapi.yaml"
+                theme="{
+                    colors: {
+                        primary: { main: 'var(--primary-color)' },
+                        text: { primary: 'var(--text-color)' }
+                    },
+                    typography: {
+                        fontFamily: 'Roboto, sans-serif',
+                        headings: { fontFamily: 'Montserrat, sans-serif' }
+                    },
+                    sidebar: {
+                        backgroundColor: 'var(--background-color)'
+                    }
+                }"
+            ></redoc>
+        </div>
+        <div id="postman-container">
+            <div class="download-section">
+                <h2>Download Postman Collection</h2>
+                <p>Choose one of the following options to get started with the Kickbase API:</p>
+                <a href="https://god.gw.postman.com/run-collection/28033934-c4f4c6e4-d0c4-4b61-a4f4-5e5c7c7b5b9e?action=collection%2Ffork&source=rip_markdown&collection-url=entityId%3D28033934-c4f4c6e4-d0c4-4b61-a4f4-5e5c7c7b5b9e%26entityType%3Dcollection%26workspaceId%3D437daeb3-c648-4e95-9c47-54f984217188" 
+                   target="_blank" 
+                   class="download-button">
+                    <img src="https://run.pstmn.io/button.svg" alt="Run in Postman">
+                </a>
+                <a href="Kickbase.postman_collection.json" 
+                   download 
+                   class="download-button">
+                    Download Collection File
+                </a>
+                <a href="Kickbase.postman_environment.json" 
+                   download 
+                   class="download-button">
+                    Download Environment File
+                </a>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
     <script>
-        // Theme toggle functionality
+        function showTab(tabName) {
+            // Hide all containers
+            document.querySelectorAll('.content > div').forEach(div => div.classList.remove('active'));
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected container
+            document.getElementById(`${tabName}-container`).classList.add('active');
+            document.querySelector(`.nav-tab[onclick="showTab('${tabName}')"]`).classList.add('active');
+        }
+
         function toggleTheme() {
             const body = document.body;
             const isDark = body.classList.toggle('dark-mode');
             document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
             
-            // Force ReDoc to update its theme
             const redocElement = document.querySelector('redoc');
             if (redocElement) {
                 redocElement.setAttribute('key', Date.now());
             }
 
-            // Save preference
             localStorage.setItem('theme', isDark ? 'dark' : 'light');
         }
 
-        // Load saved theme preference or system preference
+        // Load saved theme preference
         document.addEventListener('DOMContentLoaded', function() {
             const savedTheme = localStorage.getItem('theme');
             if (savedTheme === 'dark' || 
                 (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 toggleTheme();
-            }
-        });
-
-        // Handle system theme changes
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-            if (!localStorage.getItem('theme')) {
-                if (e.matches) {
-                    if (!document.body.classList.contains('dark-mode')) {
-                        toggleTheme();
-                    }
-                } else {
-                    if (document.body.classList.contains('dark-mode')) {
-                        toggleTheme();
-                    }
-                }
             }
         });
     </script>
