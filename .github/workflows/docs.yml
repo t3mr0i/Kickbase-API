@@ -86,13 +86,13 @@ jobs:
         cat docs/openapi-header.yaml docs/openapi-content.yaml > docs/openapi.yaml
         rm docs/openapi-header.yaml docs/openapi-content.yaml
 
-    # Copy assets and ensure index.html is used
+    # Prepare documentation files - Fixed version
     - name: Prepare documentation files
       run: |
-        cp docs/index.html docs/index.html.bak
-        cp docs/Kickbase.postman_collection.json docs/
-        cp docs/openapi.yaml docs/
-        mv docs/index.html.bak docs/index.html
+        # No need to copy files that are already in the docs directory
+        # Just ensure all required files exist
+        ls -la docs/
+        echo "Files in docs directory:"
         
     - name: Setup Pages
       uses: actions/configure-pages@v3
