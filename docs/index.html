@@ -191,11 +191,11 @@
                     <img src="https://run.pstmn.io/button.svg" alt="Run in Postman">
                     Run in Postman
                 </a>
-                <a href="Kickbase.postman_collection.json" 
+                <a href="Kickbase.postman_optimized.json" 
                    download 
                    class="postman-button" 
                    style="background: var(--primary-color)">
-                    Download Collection
+                    Download Optimized Collection
                 </a>
             </div>
         </div>
@@ -207,36 +207,31 @@
 
         function initRedoc() {
             console.log('Initializing ReDoc...');
-            Redoc.init('openapi.yaml', {
+            return Redoc.init('openapi.yaml', {
                 theme: {
-                    colors: {
-                        primary: { main: 'var(--primary-color)' },
-                        text: { primary: 'var(--text-color)' }
-                    },
                     typography: {
+                        fontSize: '16px',
                         fontFamily: 'Roboto, sans-serif',
                         headings: { fontFamily: 'Montserrat, sans-serif' }
                     },
+                    colors: {
+                        primary: { main: '#32329f' },
+                        success: { main: '#1d8127' },
+                        warning: { main: '#ffa500' },
+                        error: { main: '#e53935' },
+                        gray: { 50: '#fafafa', 100: '#f5f5f5' }
+                    },
                     sidebar: {
-                        backgroundColor: 'var(--sidebar-bg)'
+                        backgroundColor: '#fafafa',
+                        width: '260px'
                     }
                 },
-                expandResponses: '200',
+                expandResponses: 'all',
                 hideDownloadButton: true,
                 nativeScrollbars: true,
                 pathInMiddlePanel: false,
+                hideLoading: false,
                 scrollYOffset: 60
-            }, document.getElementById('redoc-container'))
-            .then(() => {
-                console.log('ReDoc initialized successfully');
-            })
-            .catch(error => {
-                console.error('Failed to initialize ReDoc:', error);
-                document.getElementById('redoc-container').innerHTML = 
-                    `<div style="padding: 20px; color: red;">
-                        Error loading API documentation: ${error.message}<br>
-                        Please check the console for details.
-                    </div>`;
             });
         }
 

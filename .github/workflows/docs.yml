@@ -49,13 +49,14 @@ jobs:
         openapi: 3.0.0
         info:
           title: Kickbase API Documentation
+          version: 1.0.0
           description: |
             # Kickbase API Documentation
             Unofficial documentation of the Kickbase API. This documentation provides a comprehensive overview of available endpoints.
             
             ## Authentication
             Most endpoints require authentication. Use the login endpoint to obtain a token.
-
+            
             ### Required Headers
             All requests must include:
             ```
@@ -80,13 +81,6 @@ jobs:
               "rep": {}
             }
             ```
-            
-            ## Rate Limiting
-            Please be mindful of rate limits when making requests.
-            
-            ## Support
-            This is an unofficial documentation. For official support, please contact Kickbase directly.
-          version: 1.0.0
           contact:
             name: Kai Detmers
             url: https://github.com/t3mr0i/Kickbase-API
@@ -98,33 +92,34 @@ jobs:
             bearerAuth:
               type: http
               scheme: bearer
-              bearerFormat: JWT
           headers:
             UserAgent:
               description: Required Kickbase User Agent
-              required: true
               schema:
                 type: string
                 default: Kickbase/12.0.0
             Accept:
               description: Accept header
-              required: true
               schema:
                 type: string
                 default: application/json
             ContentType:
               description: Content Type header
-              required: true
               schema:
                 type: string
                 default: application/json
         security:
           - bearerAuth: []
+        paths:
         EOL
         
-        yq eval 'del(.openapi) | del(.info) | del(.servers)' docs/openapi.yaml > docs/openapi-content.yaml
-        cat docs/openapi-header.yaml docs/openapi-content.yaml > docs/openapi.yaml
-        rm docs/openapi-header.yaml docs/openapi-content.yaml
+        # Create a temporary file for paths
+        echo "  # Account & Authentication" > docs/paths.yaml
+        yq eval 'del(.openapi) | del(.info) | del(.servers) | del(.components) | del(.security)' docs/openapi.yaml >> docs/paths.yaml
+        
+        # Combine files
+        cat docs/openapi-header.yaml docs/paths.yaml > docs/openapi.yaml
+        rm docs/openapi-header.yaml docs/paths.yaml
 
     # Prepare documentation files - Fixed version
     - name: Prepare documentation files
@@ -165,3 +160,7 @@ jobs:
         cat docs/openapi.yaml
         echo "\nIndex.html content:"
         cat docs/index.html
+
+    - name: Prepare Postman files
+      run: |
+        cp docs/Kickbase.postman_optimized.json docs/
