@@ -1,0 +1,59 @@
+openapi: 3.0.0
+info:
+  title: Kickbase API Documentation
+  version: 1.0.0
+  description: Unofficial documentation of the Kickbase API
+  contact:
+    name: Kai Detmers
+    url: https://github.com/t3mr0i/Kickbase-API
+
+servers:
+  - url: https://api.kickbase.com
+    description: Production Server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  parameters:
+    LeagueId:
+      name: leagueId
+      in: path
+      required: true
+      schema:
+        type: string
+    PlayerId:
+      name: playerId
+      in: path
+      required: true
+      schema:
+        type: string
+
+paths:
+  /v4/leagues/{leagueId}/squad:
+    get:
+      summary: Get Squad
+      parameters:
+        - $ref: '#/components/parameters/LeagueId'
+      responses:
+        '200':
+          description: Squad details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  it:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        mvgl:
+                          type: integer
+                        i:
+                          type: string
+                        n:
+                          type: string
+                  mppu:
+                    type: integer 
