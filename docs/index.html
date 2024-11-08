@@ -179,7 +179,7 @@
         </header>
 
         <main class="main-content">
-            <div id="redoc-container">Loading...</div>
+            <redoc id="redoc-container"></redoc>
         </main>
 
         <div class="postman-section" id="postman-section" style="display: none;">
@@ -207,31 +207,38 @@
 
         function initRedoc() {
             console.log('Initializing ReDoc...');
-            return Redoc.init('openapi.yaml', {
+            const element = document.getElementById('redoc-container');
+            if (!element) {
+                console.error('ReDoc container not found');
+                return;
+            }
+
+            Redoc.init('./openapi.yaml', {
                 theme: {
+                    colors: {
+                        primary: { main: 'var(--primary-color)' }
+                    },
                     typography: {
-                        fontSize: '16px',
                         fontFamily: 'Roboto, sans-serif',
                         headings: { fontFamily: 'Montserrat, sans-serif' }
                     },
-                    colors: {
-                        primary: { main: '#32329f' },
-                        success: { main: '#1d8127' },
-                        warning: { main: '#ffa500' },
-                        error: { main: '#e53935' },
-                        gray: { 50: '#fafafa', 100: '#f5f5f5' }
-                    },
                     sidebar: {
-                        backgroundColor: '#fafafa',
-                        width: '260px'
+                        backgroundColor: 'var(--sidebar-bg)'
                     }
                 },
-                expandResponses: 'all',
+                expandResponses: '200',
                 hideDownloadButton: true,
                 nativeScrollbars: true,
-                pathInMiddlePanel: false,
-                hideLoading: false,
-                scrollYOffset: 60
+                pathInMiddlePanel: false
+            }, element)
+            .then(() => {
+                console.log('ReDoc initialized successfully');
+            })
+            .catch(error => {
+                console.error('ReDoc initialization error:', error);
+                element.innerHTML = `<div style="padding: 20px; color: red;">
+                    Error loading API documentation: ${error.message}
+                </div>`;
             });
         }
 
