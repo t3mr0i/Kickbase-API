@@ -6,11 +6,19 @@ on:
   pull_request:
     branches: [ main ]
 
+# Add these permissions
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        persist-credentials: true
 
     - name: Install postman-to-openapi
       run: npm install -g postman-to-openapi
@@ -18,7 +26,7 @@ jobs:
     - name: Convert Postman Collection to OpenAPI
       run: |
         p2o ./docs/Kickbase.postman_collection.json -f ./docs/openapi.yaml
-        
+
     - name: Add OpenAPI metadata
       run: |
         # Add any additional metadata or modifications to the OpenAPI spec
@@ -50,7 +58,8 @@ jobs:
         rm -f ./docs/openapi-header.yaml
 
     - name: Deploy to GitHub Pages
-      uses: JamesIves/github-pages-deploy-action@4.1.4
+      uses: JamesIves/github-pages-deploy-action@v4
       with:
         branch: gh-pages
         folder: docs
+        token: ${{ secrets.GITHUB_TOKEN }}
