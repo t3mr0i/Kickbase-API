@@ -36,14 +36,14 @@ jobs:
     
     - name: Convert Postman to OpenAPI
       run: |
-        p2o ./docs/Kickbase.postman_collection.json -f ./docs/openapi.yaml
+        p2o ./Kickbase.postman_collection.json -f ./docs/openapi.yaml
         
     - name: Install yq for YAML processing
       run: |
         sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64
         sudo chmod a+x /usr/local/bin/yq
         
-    - name: Add OpenAPI metadata
+    - name: Create OpenAPI spec
       run: |
         cat > docs/openapi.yaml << 'EOL'
         openapi: 3.0.0
@@ -76,127 +76,7 @@ jobs:
         servers:
           - url: https://api.kickbase.com
             description: Production Server
-        components:
-          schemas:
-            Squad:
-              type: object
-              properties:
-                it:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      mvgl:
-                        type: integer
-                        example: 7168491
-                      i:
-                        type: string
-                        example: "1991"
-                      n:
-                        type: string
-                        example: "Upamecano"
-                      pos:
-                        type: integer
-                        example: 2
-                      mv:
-                        type: integer
-                        example: 26721076
-                mppu:
-                  type: integer
-                  example: 17
-
-            PlayerDetails:
-              type: object
-              properties:
-                i:
-                  type: string
-                  example: "8329"
-                fn:
-                  type: string
-                  example: "Michael"
-                ln:
-                  type: string
-                  example: "Olise"
-                pos:
-                  type: integer
-                  example: 3
-                mv:
-                  type: integer
-                  example: 42912247
-
-            LeagueRanking:
-              type: object
-              properties:
-                ti:
-                  type: string
-                  example: "Tsubasa SüperLig"
-                us:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      n:
-                        type: string
-                        example: "Kai Dtmrs"
-                      sp:
-                        type: integer
-                        example: 9806
-                      tv:
-                        type: number
-                        example: 293136164.0
-
         paths:
-          /v4/leagues/{leagueId}/squad:
-            get:
-              summary: Get Squad
-              parameters:
-                - $ref: '#/components/parameters/LeagueId'
-              responses:
-                '200':
-                  description: Squad details
-                  content:
-                    application/json:
-                      schema:
-                        $ref: '#/components/schemas/Squad'
-                      example:
-                        it:
-                          - mvgl: 7168491
-                            i: "1991"
-                            n: "Upamecano"
-                            pos: 2
-                            mv: 26721076
-                        mppu: 17
-
-          /v4/leagues/{leagueId}/players/{playerId}:
-            get:
-              summary: Get Player Details
-              parameters:
-                - $ref: '#/components/parameters/LeagueId'
-                - $ref: '#/components/parameters/PlayerId'
-              responses:
-                '200':
-                  description: Player details
-                  content:
-                    application/json:
-                      schema:
-                        $ref: '#/components/schemas/PlayerDetails'
-
-          /v4/leagues/{leagueId}/ranking:
-            get:
-              summary: Get League Ranking
-              parameters:
-                - $ref: '#/components/parameters/LeagueId'
-              responses:
-                '200':
-                  description: League ranking
-                  content:
-                    application/json:
-                      schema:
-                        $ref: '#/components/schemas/LeagueRanking'
-EOL
-
-        # Add paths separately to avoid duplication
-        cat >> docs/openapi.yaml << 'EOL'
           /v4/user/login:
             post:
               tags:
@@ -208,17 +88,28 @@ EOL
                   application/json:
                     schema:
                       type: object
+                      required:
+                        - ext
+                        - em
+                        - loy
+                        - pass
+                        - rep
                       properties:
                         ext:
                           type: boolean
+                          example: true
                         em:
                           type: string
+                          example: "your@mail.com"
                         loy:
                           type: boolean
+                          example: false
                         pass:
                           type: string
+                          example: "yourpassword"
                         rep:
                           type: object
+                          example: {}
               responses:
                 '200':
                   description: Successful login
@@ -229,15 +120,64 @@ EOL
                         properties:
                           token:
                             type: string
-EOL
+        EOL
 
-    # Prepare documentation files - Fixed version
-    - name: Prepare documentation files
+    - name: Create index.html
       run: |
-        # No need to copy files that are already in the docs directory
-        # Just ensure all required files exist
-        ls -la docs/
-        echo "Files in docs directory:"
+        cat > docs/index.html << 'EOL'
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Kickbase API Documentation</title>
+            <meta charset="utf-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
+            <style>
+                body {
+                    margin: 0;
+                    padding: 0;
+                    height: 100vh;
+                }
+            </style>
+        </head>
+        <body>
+            <div id="redoc"></div>
+            <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+            <script>
+                Redoc.init('./openapi.yaml', {
+                    theme: {
+                        colors: {
+                            primary: {
+                                main: '#32329f'
+                            }
+                        },
+                        typography: {
+                            fontSize: '16px',
+                            fontFamily: 'Roboto, sans-serif',
+                            headings: {
+                                fontFamily: 'Montserrat, sans-serif'
+                            }
+                        },
+                        sidebar: {
+                            width: '300px'
+                        },
+                        rightPanel: {
+                            backgroundColor: '#ffffff'
+                        }
+                    },
+                    expandResponses: '200',
+                    hideDownloadButton: false,
+                    nativeScrollbars: true,
+                    scrollYOffset: 50,
+                    sortPropsAlphabetically: true,
+                    requiredPropsFirst: true,
+                    showExtensions: true,
+                    pathInMiddlePanel: true
+                }, document.getElementById('redoc'));
+            </script>
+        </body>
+        </html>
+        EOL
         
     - name: Setup Pages
       uses: actions/configure-pages@v3
@@ -250,27 +190,3 @@ EOL
     - name: Deploy to GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v2
-
-    # After the OpenAPI metadata step
-    - name: Verify OpenAPI spec
-      run: |
-        echo "Checking OpenAPI spec file..."
-        cat docs/openapi.yaml
-        echo "OpenAPI spec location:"
-        pwd
-        ls -la docs/
-
-    - name: Debug OpenAPI generation
-      run: |
-        echo "Current directory contents:"
-        ls -la
-        echo "\nDocs directory contents:"
-        ls -la docs/
-        echo "\nOpenAPI spec content:"
-        cat docs/openapi.yaml
-        echo "\nIndex.html content:"
-        cat docs/index.html
-
-    - name: Prepare Postman files
-      run: |
-        cp docs/Kickbase.postman_optimized.json docs/
