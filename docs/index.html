@@ -5,161 +5,7 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,700|Roboto:300,400,700" rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #32329f;
-            --secondary-color: #454545;
-            --background-color: #ffffff;
-            --text-color: #333333;
-            --border-color: #e0e0e0;
-            --header-bg: #f5f5f5;
-            --sidebar-bg: #fafafa;
-            --code-bg: #f6f8fa;
-        }
-
-        [data-theme='dark'] {
-            --primary-color: #6e6ed9;
-            --secondary-color: #c5c5c5;
-            --background-color: #1a1a1a;
-            --text-color: #ffffff;
-            --border-color: #2d2d2d;
-            --header-bg: #2a2a2a;
-            --sidebar-bg: #252525;
-            --code-bg: #2d2d2d;
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Roboto', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            transition: all 0.3s ease;
-        }
-
-        .layout {
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .header {
-            background: var(--header-bg);
-            padding: 1rem;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .header-right {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .theme-toggle, .export-button {
-            padding: 0.5rem 1rem;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .theme-toggle:hover, .export-button:hover {
-            opacity: 0.9;
-        }
-
-        .main-content {
-            display: flex;
-            flex: 1;
-            position: relative;
-        }
-
-        #redoc-container {
-            flex: 1;
-            height: calc(100vh - 64px);
-            overflow: auto;
-        }
-
-        /* ReDoc Customization */
-        ::ng-deep .redoc-wrap {
-            background-color: var(--background-color) !important;
-        }
-
-        ::ng-deep .menu-content {
-            background-color: var(--sidebar-bg) !important;
-            border-right: 1px solid var(--border-color) !important;
-        }
-
-        ::ng-deep .api-info h1 {
-            color: var(--primary-color) !important;
-        }
-
-        ::ng-deep .operation-type {
-            border-radius: 4px !important;
-        }
-
-        .postman-section {
-            position: fixed;
-            bottom: 1rem;
-            right: 1rem;
-            background: var(--header-bg);
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
-        }
-
-        .postman-button {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: #FF6C37;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-            font-weight: 500;
-            transition: all 0.2s ease;
-        }
-
-        .postman-button:hover {
-            opacity: 0.9;
-        }
-
-        .postman-button img {
-            height: 20px;
-        }
-
-        @media (max-width: 768px) {
-            .header {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 0.5rem;
-            }
-
-            .postman-section {
-                position: fixed;
-                bottom: 0;
-                right: 0;
-                left: 0;
-                border-radius: 0;
-            }
-        }
-    </style>
+    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"> </script>
 </head>
 <body>
     <div class="layout">
@@ -179,110 +25,154 @@
         </header>
 
         <main class="main-content">
-            <redoc id="redoc-container"></redoc>
+            <div id="redoc"></div>
         </main>
 
         <div class="postman-section" id="postman-section" style="display: none;">
-            <h3>Export Options</h3>
-            <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                <a href="https://god.gw.postman.com/run-collection/28033934-c4f4c6e4-d0c4-4b61-a4f4-5e5c7c7b5b9e" 
-                   target="_blank" 
-                   class="postman-button">
-                    <img src="https://run.pstmn.io/button.svg" alt="Run in Postman">
-                    Run in Postman
-                </a>
-                <a href="Kickbase.postman_optimized.json" 
-                   download 
-                   class="postman-button" 
-                   style="background: var(--primary-color)">
-                    Download Optimized Collection
-                </a>
-            </div>
+            <!-- Postman section content -->
         </div>
     </div>
 
-    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
     <script>
-        console.log('Script started');
-
-        function initRedoc() {
-            console.log('Initializing ReDoc...');
-            const element = document.getElementById('redoc-container');
-            if (!element) {
-                console.error('ReDoc container not found');
-                return;
-            }
-
-            Redoc.init('./openapi.yaml', {
-                theme: {
-                    colors: {
-                        primary: { main: 'var(--primary-color)' }
+        const options = {
+            scrollYOffset: 50,
+            hideDownloadButton: true,
+            theme: {
+                spacing: {
+                    unit: 5,
+                    sectionVertical: 8
+                },
+                breakpoints: {
+                    small: '50rem',
+                    medium: '85rem',
+                    large: '105rem'
+                },
+                colors: {
+                    primary: {
+                        main: '#32329f'
                     },
-                    typography: {
-                        fontFamily: 'Roboto, sans-serif',
-                        headings: { fontFamily: 'Montserrat, sans-serif' }
+                    success: {
+                        main: '#00aa13'
                     },
-                    sidebar: {
-                        backgroundColor: 'var(--sidebar-bg)'
+                    error: {
+                        main: '#e53935'
+                    },
+                    warning: {
+                        main: '#f1c400'
+                    },
+                    text: {
+                        primary: '#333333',
+                        secondary: '#4c555a'
+                    },
+                    gray: {
+                        50: '#fafafa',
+                        100: '#f5f5f5'
+                    },
+                    border: {
+                        dark: 'rgba(0,0,0, 0.1)',
+                        light: '#ffffff'
                     }
                 },
-                expandResponses: '200',
-                hideDownloadButton: true,
-                nativeScrollbars: true,
-                pathInMiddlePanel: false
-            }, element)
-            .then(() => {
-                console.log('ReDoc initialized successfully');
-            })
-            .catch(error => {
-                console.error('ReDoc initialization error:', error);
-                element.innerHTML = `<div style="padding: 20px; color: red;">
-                    Error loading API documentation: ${error.message}
-                </div>`;
-            });
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('DOM Content Loaded');
-            
-            const savedTheme = localStorage.getItem('theme') || 
-                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-            document.documentElement.setAttribute('data-theme', savedTheme);
-            
-            console.log('Fetching OpenAPI spec...');
-            fetch('openapi.yaml')
-                .then(response => {
-                    console.log('OpenAPI spec response:', response.status);
-                    if (!response.ok) {
-                        throw new Error(`Failed to load OpenAPI spec: ${response.status}`);
+                typography: {
+                    fontSize: '16px',
+                    lineHeight: '1.5em',
+                    fontFamily: 'Roboto, sans-serif',
+                    headings: {
+                        fontFamily: 'Montserrat, sans-serif',
+                        fontWeight: '600'
+                    },
+                    code: {
+                        fontSize: '14px',
+                        fontFamily: 'Monaco, Courier, monospace'
                     }
-                    return response.text();
-                })
-                .then(spec => {
-                    console.log('OpenAPI spec loaded, length:', spec.length);
-                    initRedoc();
-                })
-                .catch(error => {
-                    console.error('Error loading OpenAPI spec:', error);
-                    document.getElementById('redoc-container').innerHTML = 
-                        `<div style="padding: 20px; color: red;">
-                            Failed to load API documentation: ${error.message}<br>
-                            Please ensure openapi.yaml is present and accessible.
-                        </div>`;
-                });
-        });
+                },
+                sidebar: {
+                    backgroundColor: '#fafafa',
+                    width: '260px'
+                },
+                rightPanel: {
+                    backgroundColor: '#263238',
+                    width: '40%'
+                }
+            }
+        };
 
+        // Initialize ReDoc
+        Redoc.init(
+            'openapi.yaml',
+            options,
+            document.getElementById('redoc')
+        ).catch(console.error);
+
+        // Theme toggle functionality
         function toggleTheme() {
             const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
             document.documentElement.setAttribute('data-theme', isDark ? 'light' : 'dark');
             localStorage.setItem('theme', isDark ? 'light' : 'dark');
-            initRedoc();
         }
+
+        // Initialize theme
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 
+                (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        });
 
         function showPostmanOptions() {
             const section = document.getElementById('postman-section');
             section.style.display = section.style.display === 'none' ? 'block' : 'none';
         }
     </script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        .layout {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: #fff;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            flex: 1;
+            margin-top: 20px;
+        }
+
+        #redoc {
+            height: calc(100vh - 60px);
+        }
+
+        .theme-toggle, .export-button {
+            padding: 8px 16px;
+            margin-left: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            background: #f0f0f0;
+        }
+
+        .theme-toggle:hover, .export-button:hover {
+            background: #e0e0e0;
+        }
+
+        [data-theme="dark"] {
+            color-scheme: dark;
+        }
+    </style>
 </body>
 </html> 
