@@ -8,20 +8,29 @@
 </head>
 <body>
     <div id="redoc"></div>
-    <script src="https://cdn.jsdelivr.net/npm/redoc@next/bundles/redoc.standalone.js"></script>
+    <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
     <script>
-        window.onload = function() {
-            var element = document.getElementById('redoc');
+        document.addEventListener('DOMContentLoaded', () => {
+            const element = document.getElementById('redoc');
             Redoc.init(
                 'openapi.yaml',
                 {
                     hideDownloadButton: true,
                     nativeScrollbars: true,
-                    theme: { colors: { primary: { main: '#32329f' } } }
+                    theme: {
+                        colors: {
+                            primary: { main: '#32329f' }
+                        }
+                    }
                 },
                 element
-            );
-        }
+            ).catch(error => {
+                console.error('ReDoc initialization error:', error);
+                element.innerHTML = `<div style="padding: 20px; color: red;">
+                    Error loading API documentation: ${error.message}
+                </div>`;
+            });
+        });
     </script>
 </body>
 </html> 
