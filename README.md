@@ -1,14 +1,31 @@
-# Kickbase API Documentation
+# API Documentation Site
 
-This repository contains unofficial documentation of the Kickbase API. This work is not affiliated with Kickbase and is created for educational purposes only.
+A modern, interactive API documentation site with Postman collection export capability.
 
-## Documentation
+## Features
 
-You can view the API documentation at [https://t3mr0i.github.io/Kickbase-API](https://t3mr0i.github.io/Kickbase-API)
+- 📚 Clean, modern documentation layout
+- 🔍 Interactive endpoint exploration
+- 📤 Export to Postman collection
+- 🎨 Responsive design
+- ✨ Syntax highlighting for code examples
 
-## Generate Documentation
+## Development
 
-This API documentation is generated from a Postman collection. 
+1. Clone the repository
+2. Navigate to the `docs` directory
+3. Serve the directory using a local server (e.g., `python -m http.server 8000`)
+4. Open `http://localhost:8000` in your browser
 
-The thank you goes to @kevinskyba for creating the original Postman collection.
+## Deployment
+
+The site is automatically deployed to GitHub Pages when changes are pushed to the main branch.
+
+## Customization
+
+To add or modify API endpoints, edit the `docs/js/api-data.js` file.
+
+## License
+
+MIT
 

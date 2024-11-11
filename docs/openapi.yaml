@@ -2,14 +2,7 @@ openapi: 3.0.0
 info:
   title: Kickbase API Documentation
   version: 1.0.0
-  description: |
-    Unofficial documentation of the Kickbase API.
-    
-    ## Competition IDs
-    - 1: Bundesliga
-    - 2: 2. Bundesliga
-    - 3: La Liga
-    - 4: Google Pixel Frauen Bundesliga
+  description: Unofficial documentation of the Kickbase API
   contact:
     name: Kai Detmers
     url: https://github.com/t3mr0i/Kickbase-API
@@ -18,44 +11,11 @@ servers:
   - url: https://api.kickbase.com
     description: Production Server
 
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-  schemas:
-    Error:
-      type: object
-      properties:
-        code:
-          type: integer
-        message:
-          type: string
-    PlayerBase:
-      type: object
-      properties:
-        i:
-          type: string
-          description: Player ID
-        n:
-          type: string
-          description: Player Name
-        pos:
-          type: integer
-          description: Position
-        mv:
-          type: integer
-          description: Market Value
-    Squad:
-      type: object
-      properties:
-        it:
-          type: array
-          items:
-            $ref: '#/components/schemas/PlayerBase'
-        mppu:
-          type: integer
-          description: Max Players Per User
+tags:
+  - name: Authentication
+    description: Authentication endpoints
+  - name: League
+    description: League management endpoints
 
 paths:
   /v4/user/login:
@@ -63,43 +23,29 @@ paths:
       tags:
         - Authentication
       summary: Login to Kickbase
+      operationId: login
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                ext:
-                  type: boolean
-                em:
-                  type: string
-                  description: Email
-                pass:
-                  type: string
-                  description: Password
+              $ref: '#/components/schemas/LoginRequest'
       responses:
         '200':
           description: Successful login
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  token:
-                    type: string
+                $ref: '#/components/schemas/LoginResponse'
 
   /v4/leagues/{leagueId}/squad:
     get:
       tags:
         - League
       summary: Get Squad
+      operationId: getSquad
       parameters:
-        - name: leagueId
-          in: path
-          required: true
-          schema:
-            type: string
+        - $ref: '#/components/parameters/LeagueId'
       responses:
         '200':
           description: Squad details
@@ -107,44 +53,73 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Squad'
-              example:
-                it:
-                  - mvgl: 7168491
-                    i: "1991"
-                    n: "Upamecano"
-                    pos: 2
-                    mv: 26721076
-                mppu: 17
 
-  /v4/leagues/{leagueId}/players/{playerId}:
-    get:
-      tags:
-        - League
-      summary: Get Player Details
-      parameters:
-        - name: leagueId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: playerId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Player details
-          content:
-            application/json:
-              schema:
-                allOf:
-                  - $ref: '#/components/schemas/PlayerBase'
-                  - type: object
-                    properties:
-                      fn:
-                        type: string
-                        description: First Name
-                      ln:
-                        type: string
-                        description: Last Name
+components:
+  parameters:
+    LeagueId:
+      name: leagueId
+      in: path
+      required: true
+      schema:
+        type: string
+      description: ID of the league
+
+  schemas:
+    LoginRequest:
+      type: object
+      required:
+        - em
+        - pass
+      properties:
+        ext:
+          type: boolean
+          description: Extended login
+        em:
+          type: string
+          description: Email address
+        pass:
+          type: string
+          description: Password
+
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Authentication token
+
+    Squad:
+      type: object
+      properties:
+        it:
+          type: array
+          items:
+            $ref: '#/components/schemas/Player'
+        mppu:
+          type: integer
+          description: Maximum players per user
+
+    Player:
+      type: object
+      properties:
+        i:
+          type: string
+          description: Player ID
+        n:
+          type: string
+          description: Player name
+        pos:
+          type: integer
+          description: Position
+        mv:
+          type: integer
+          description: Market value
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Bearer authentication with JWT token
+
+security:
+  - bearerAuth: []
