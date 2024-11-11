@@ -92,12 +92,73 @@ const apiData = {
                                 name: "Username",
                                 token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
                             }
-                        },
-                        "400": {
-                            description: "Invalid registration data",
+                        }
+                    }
+                },
+                {
+                    id: "forgot-password",
+                    name: "Forgot Password",
+                    method: "POST",
+                    path: "/v4/user/forgotpassword",
+                    description: "Request password reset",
+                    parameters: [
+                        {
+                            name: "email",
+                            type: "string",
+                            required: true,
+                            description: "User's email address"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Password reset email sent",
                             example: {
-                                error: "Email already exists",
-                                code: "EMAIL_EXISTS"
+                                success: true,
+                                message: "Reset instructions sent to email"
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "edit-password",
+                    name: "Edit Password",
+                    method: "POST",
+                    path: "/v4/user/password",
+                    description: "Change user password",
+                    parameters: [
+                        {
+                            name: "currentPassword",
+                            type: "string",
+                            required: true,
+                            description: "Current password"
+                        },
+                        {
+                            name: "newPassword",
+                            type: "string",
+                            required: true,
+                            description: "New password"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Password changed successfully",
+                            example: {
+                                success: true
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "delete-account",
+                    name: "Delete Account",
+                    method: "DELETE",
+                    path: "/v4/user",
+                    description: "Delete user account",
+                    responses: {
+                        "200": {
+                            description: "Account deleted successfully",
+                            example: {
+                                success: true
                             }
                         }
                     }
@@ -153,34 +214,81 @@ const apiData = {
                     }
                 },
                 {
-                    id: "league-ranking",
-                    name: "Get League Ranking",
-                    method: "GET",
-                    path: "/v4/leagues/{leagueId}/ranking",
-                    description: "Get current league rankings",
+                    id: "join-league",
+                    name: "Join League",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/join",
+                    description: "Join a public league",
                     responses: {
                         "200": {
-                            description: "League rankings retrieved successfully",
+                            description: "Successfully joined league",
                             example: {
-                                rankings: [
+                                success: true,
+                                league: {
+                                    id: "league123",
+                                    name: "League Name",
+                                    memberCount: 5,
+                                    maxMembers: 8
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "join-private-league",
+                    name: "Join Private League",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/join/{code}",
+                    description: "Join a private league using invite code",
+                    parameters: [
+                        {
+                            name: "code",
+                            type: "string",
+                            required: true,
+                            description: "League invite code"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Successfully joined private league",
+                            example: {
+                                success: true,
+                                league: {
+                                    id: "league123",
+                                    name: "Private League",
+                                    type: "private",
+                                    memberCount: 5,
+                                    maxMembers: 8
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "league-preview",
+                    name: "Get League Preview",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/overview",
+                    description: "Get preview data for a league",
+                    responses: {
+                        "200": {
+                            description: "League preview data retrieved",
+                            example: {
+                                id: "league123",
+                                name: "League Name",
+                                type: "public",
+                                season: "2023/24",
+                                members: {
+                                    current: 6,
+                                    max: 8
+                                },
+                                topPlayers: [
                                     {
-                                        position: 1,
                                         userId: "user123",
-                                        name: "Player 1",
-                                        points: 1250,
-                                        teamValue: 150000000,
-                                        trend: "up"
-                                    },
-                                    {
-                                        position: 2,
-                                        userId: "user456",
-                                        name: "Player 2",
-                                        points: 1100,
-                                        teamValue: 145000000,
-                                        trend: "down"
+                                        name: "Top Player",
+                                        points: 1500
                                     }
-                                ],
-                                totalParticipants: 8
+                                ]
                             }
                         }
                     }
@@ -193,151 +301,263 @@ const apiData = {
             description: "Endpoints for market and player management",
             endpoints: [
                 {
-                    id: "market-overview",
-                    name: "Get Market Overview",
+                    id: "get-squad",
+                    name: "Get Squad",
                     method: "GET",
-                    path: "/v4/leagues/{leagueId}/market/overview",
-                    description: "Get current market overview",
+                    path: "/v4/leagues/{leagueId}/squad",
+                    description: "Get current squad information",
                     responses: {
                         "200": {
-                            description: "Market overview retrieved successfully",
+                            description: "Squad information retrieved",
                             example: {
                                 players: [
                                     {
                                         id: "player123",
                                         name: "Player Name",
-                                        team: "Team Name",
                                         position: "FW",
-                                        price: 15000000,
-                                        expiry: "2024-01-01T00:00:00Z",
+                                        team: "Team Name",
+                                        number: 9,
+                                        status: "active",
                                         stats: {
-                                            averagePoints: 85.5,
-                                            totalMatches: 15,
-                                            goals: 10
+                                            points: 85,
+                                            marketValue: 15000000,
+                                            averagePoints: 8.5
                                         }
                                     }
                                 ],
-                                marketStatus: {
-                                    isOpen: true,
-                                    nextUpdate: "2024-01-01T12:00:00Z"
+                                formation: "4-4-2",
+                                totalValue: 150000000
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "market-players",
+                    name: "Get Market Players",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/market/players",
+                    description: "Get all available players in the market",
+                    responses: {
+                        "200": {
+                            description: "Market players retrieved",
+                            example: {
+                                players: [
+                                    {
+                                        id: "player123",
+                                        name: "Available Player",
+                                        position: "MF",
+                                        team: "Team Name",
+                                        price: 12000000,
+                                        expiry: "2024-01-01T00:00:00Z",
+                                        stats: {
+                                            form: 8.5,
+                                            totalPoints: 123,
+                                            gamesPlayed: 15
+                                        }
+                                    }
+                                ],
+                                meta: {
+                                    total: 50,
+                                    available: 25
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            id: "competition",
+            name: "Competition",
+            description: "Endpoints for competition data",
+            endpoints: [
+                {
+                    id: "competition-data",
+                    name: "Get Competition Data",
+                    method: "GET",
+                    path: "/v4/competition/{competitionId}",
+                    description: "Get competition information",
+                    responses: {
+                        "200": {
+                            description: "Competition data retrieved",
+                            example: {
+                                id: "comp123",
+                                name: "Bundesliga",
+                                season: "2023/24",
+                                currentMatchday: 15,
+                                totalMatchdays: 34,
+                                teams: [
+                                    {
+                                        id: "team123",
+                                        name: "Team Name",
+                                        shortName: "TN",
+                                        position: 1,
+                                        points: 35
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "match-day",
+                    name: "Get Match Day Data",
+                    method: "GET",
+                    path: "/v4/competition/{competitionId}/matchday/{matchDayId}",
+                    description: "Get match day information",
+                    responses: {
+                        "200": {
+                            description: "Match day data retrieved",
+                            example: {
+                                matchday: 15,
+                                matches: [
+                                    {
+                                        id: "match123",
+                                        homeTeam: {
+                                            id: "team1",
+                                            name: "Home Team",
+                                            score: 2
+                                        },
+                                        awayTeam: {
+                                            id: "team2",
+                                            name: "Away Team",
+                                            score: 1
+                                        },
+                                        status: "FINISHED",
+                                        date: "2024-01-01T15:30:00Z"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            id: "chat",
+            name: "Chat",
+            description: "Endpoints for chat functionality",
+            endpoints: [
+                {
+                    id: "chat-leagues",
+                    name: "Fetch Chat Leagues",
+                    method: "GET",
+                    path: "/v4/chat/leagueselection",
+                    description: "Get all available chat leagues",
+                    responses: {
+                        "200": {
+                            description: "Chat leagues retrieved",
+                            example: {
+                                leagues: [
+                                    {
+                                        id: "league123",
+                                        name: "League Chat",
+                                        unreadCount: 5,
+                                        lastMessage: {
+                                            text: "Hello everyone!",
+                                            timestamp: "2024-01-01T12:00:00Z",
+                                            sender: "User123"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "refresh-token",
+                    name: "Refresh Chat Token",
+                    method: "GET",
+                    path: "/v4/chat/refreshtoken",
+                    description: "Refresh the chat authentication token",
+                    responses: {
+                        "200": {
+                            description: "Chat token refreshed",
+                            example: {
+                                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                                expiresIn: 3600
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            id: "utility",
+            name: "Utility",
+            description: "Utility endpoints",
+            endpoints: [
+                {
+                    id: "app-config",
+                    name: "Get App Configuration",
+                    method: "GET",
+                    path: "/v4/config",
+                    description: "Get application configuration",
+                    responses: {
+                        "200": {
+                            description: "App configuration retrieved",
+                            example: {
+                                version: "12.0.0",
+                                features: {
+                                    chat: true,
+                                    challenges: true
+                                },
+                                maintenance: {
+                                    scheduled: false
+                                },
+                                urls: {
+                                    terms: "https://kickbase.com/terms",
+                                    privacy: "https://kickbase.com/privacy"
                                 }
                             }
                         }
                     }
                 },
                 {
-                    id: "buy-player",
-                    name: "Buy Player",
-                    method: "POST",
-                    path: "/v4/leagues/{leagueId}/market/{playerId}/buy",
-                    description: "Purchase a player from the market",
-                    parameters: [
-                        {
-                            name: "price",
-                            type: "number",
-                            required: true,
-                            description: "Offer price in game currency"
-                        }
-                    ],
+                    id: "daily-bonus",
+                    name: "Collect Daily Bonus",
+                    method: "GET",
+                    path: "/v4/bonus/collect",
+                    description: "Collect daily bonus rewards",
                     responses: {
                         "200": {
-                            description: "Player purchased successfully",
+                            description: "Daily bonus collected",
                             example: {
-                                success: true,
-                                transaction: {
-                                    id: "trans123",
-                                    playerId: "player123",
-                                    price: 15000000,
-                                    timestamp: "2024-01-01T00:00:00Z"
-                                },
-                                newBalance: 5000000
-                            }
-                        },
-                        "400": {
-                            description: "Purchase failed",
-                            example: {
-                                error: "Insufficient funds",
-                                code: "INSUFFICIENT_FUNDS"
+                                amount: 50000,
+                                currency: "coins",
+                                nextBonus: "2024-01-02T00:00:00Z",
+                                streak: 5
                             }
                         }
                     }
-                }
-            ]
-        },
-        {
-            id: "live-data",
-            name: "Live Data",
-            description: "Endpoints for live match data",
-            endpoints: [
+                },
                 {
-                    id: "live-match",
-                    name: "Get Live Match Data",
+                    id: "live-event-types",
+                    name: "Get Live Event Types",
                     method: "GET",
-                    path: "/v4/matches/{matchId}/live",
-                    description: "Get real-time match data",
+                    path: "/v4/live/eventtypes",
+                    description: "Get all possible live event types",
                     responses: {
                         "200": {
-                            description: "Live match data retrieved successfully",
+                            description: "Live event types retrieved",
                             example: {
-                                matchId: "match123",
-                                status: "LIVE",
-                                minute: 65,
-                                score: {
-                                    home: 2,
-                                    away: 1
-                                },
                                 events: [
                                     {
-                                        type: "GOAL",
-                                        minute: 23,
-                                        playerId: "player123",
+                                        id: "GOAL",
+                                        name: "Goal",
                                         points: 4
+                                    },
+                                    {
+                                        id: "ASSIST",
+                                        name: "Assist",
+                                        points: 2
+                                    },
+                                    {
+                                        id: "YELLOW_CARD",
+                                        name: "Yellow Card",
+                                        points: -1
                                     }
-                                ],
-                                playerStats: {
-                                    "player123": {
-                                        points: 12,
-                                        events: ["GOAL", "ASSIST"]
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            ]
-        },
-        {
-            id: "stats",
-            name: "Statistics",
-            description: "Endpoints for player and team statistics",
-            endpoints: [
-                {
-                    id: "player-stats",
-                    name: "Get Player Statistics",
-                    method: "GET",
-                    path: "/v4/leagues/{leagueId}/players/{playerId}/stats",
-                    description: "Get detailed player statistics",
-                    responses: {
-                        "200": {
-                            description: "Player statistics retrieved successfully",
-                            example: {
-                                playerId: "player123",
-                                name: "Player Name",
-                                season: {
-                                    matches: 25,
-                                    goals: 15,
-                                    assists: 8,
-                                    yellowCards: 3,
-                                    redCards: 0,
-                                    averagePoints: 85.5,
-                                    totalPoints: 2137,
-                                    priceHistory: [
-                                        {
-                                            date: "2024-01-01",
-                                            price: 15000000
-                                        }
-                                    ]
-                                }
+                                ]
                             }
                         }
                     }
