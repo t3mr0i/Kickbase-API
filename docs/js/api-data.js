@@ -652,6 +652,104 @@ const apiData = {
                             }
                         }
                     }
+                },
+                {
+                    id: "accept-kickbase-offer",
+                    name: "Accept Kickbase Offer",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/market/{playerId}/sell",
+                    description: "Accept an offer from Kickbase for a player"
+                },
+                {
+                    id: "accept-manager-offer",
+                    name: "Accept Manager Offer",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/market/{playerId}/offers/{offerId}/accept",
+                    description: "Accept an offer from another manager"
+                },
+                {
+                    id: "decline-manager-offer",
+                    name: "Decline Manager Offer",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/market/{playerId}/offers/{offerId}/decline",
+                    description: "Decline an offer from another manager"
+                },
+                {
+                    id: "get-my-eleven",
+                    name: "Get My Eleven",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/teamcenter/myeleven",
+                    description: "Get current user's starting eleven"
+                },
+                {
+                    id: "get-my-players-lineup",
+                    name: "Get My Players Lineup",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/lineup",
+                    description: "Get current user's lineup"
+                },
+                {
+                    id: "get-player-market-value",
+                    name: "Get Player Market Value",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/players/{playerId}/marketValue/{timeframe}",
+                    description: "Get player's market value history"
+                },
+                {
+                    id: "get-player-transfer-history",
+                    name: "Get Player Transfer History",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/players/{playerId}/transferHistory",
+                    description: "Get player's transfer history"
+                },
+                {
+                    id: "get-player-transfers",
+                    name: "Get Player Transfers",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/players/{playerId}/transfers",
+                    description: "Get player's transfers"
+                },
+                {
+                    id: "get-players-on-transfer",
+                    name: "Get Players On Transfer",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/market",
+                    description: "Get all players currently on transfer market"
+                },
+                {
+                    id: "place-offer",
+                    name: "Place An Offer",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/market/{playerId}/offers",
+                    description: "Place an offer for a player"
+                },
+                {
+                    id: "remove-from-market",
+                    name: "Remove Player From Market",
+                    method: "DELETE",
+                    path: "/v4/leagues/{leagueId}/market/{playerId}",
+                    description: "Remove a player from the transfer market"
+                },
+                {
+                    id: "save-lineup",
+                    name: "Save Lineup",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/lineup",
+                    description: "Save current lineup"
+                },
+                {
+                    id: "set-transfer-price",
+                    name: "Set Player Transfer Price",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/market",
+                    description: "Set transfer price for a player"
+                },
+                {
+                    id: "withdraw-offer",
+                    name: "Withdraw Offer",
+                    method: "DELETE",
+                    path: "/v4/leagues/{leagueId}/market/{playerId}/offers/{offerId}",
+                    description: "Withdraw an existing offer"
                 }
             ]
         },
@@ -1282,6 +1380,111 @@ const apiData = {
                             }
                         }
                     }
+                }
+            ]
+        },
+        {
+            id: "scout",
+            name: "Scout",
+            description: "Endpoints for player scouting",
+            endpoints: [
+                {
+                    id: "add-to-scout",
+                    name: "Add Player To Scout List",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/scoutedplayers/{playerId}",
+                    description: "Add a player to scout list"
+                },
+                {
+                    id: "clear-scout-list",
+                    name: "Clear Scout List",
+                    method: "DELETE",
+                    path: "/v4/leagues/{leagueId}/scoutedplayers",
+                    description: "Clear entire scout list"
+                },
+                {
+                    id: "get-scout-list",
+                    name: "Get Scout Players List",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/scoutedplayers",
+                    description: "Get all scouted players"
+                },
+                {
+                    id: "remove-from-scout",
+                    name: "Remove From Scout List",
+                    method: "DELETE",
+                    path: "/v4/leagues/{leagueId}/scoutedplayers/{playerId}",
+                    description: "Remove a player from scout list"
+                }
+            ]
+        },
+        {
+            id: "manager-profile",
+            name: "Manager Profile",
+            description: "Endpoints for manager profiles",
+            endpoints: [
+                {
+                    id: "get-manager-performance",
+                    name: "Get Manager Performance",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/managers/{managerId}/performance",
+                    description: "Get manager's performance statistics"
+                },
+                {
+                    id: "get-manager-dashboard",
+                    name: "Get Manager Profile Dashboard",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/managers/{managerId}/dashboard",
+                    description: "Get manager's dashboard information"
+                },
+                {
+                    id: "get-manager-transfers",
+                    name: "Get Manager Profile Transfers",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/managers/{managerId}/transfer",
+                    description: "Get manager's transfer history"
+                },
+                {
+                    id: "get-manager-squad",
+                    name: "Get Manager Squad Details",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/managers/{managerId}/squad",
+                    description: "Get manager's squad details"
+                }
+            ]
+        },
+        {
+            id: "team",
+            name: "Team",
+            description: "Endpoints for team management",
+            endpoints: [
+                {
+                    id: "get-team-center",
+                    name: "Get Team Center Of Manager",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/users/{userId}/teamcenter",
+                    description: "Get team center information for a manager"
+                },
+                {
+                    id: "get-team-profile",
+                    name: "Get Team Profile Data",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/teams/{teamId}/teamprofile",
+                    description: "Get team profile information"
+                }
+            ]
+        },
+        {
+            id: "liga-insider",
+            name: "Liga Insider",
+            description: "Endpoints for Liga Insider integration",
+            endpoints: [
+                {
+                    id: "get-liga-insider",
+                    name: "Get Liga Insider Data",
+                    method: "GET",
+                    path: "/v4/sso/{target}",
+                    description: "Get Liga Insider integration data"
                 }
             ]
         }
