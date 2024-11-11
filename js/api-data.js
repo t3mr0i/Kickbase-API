@@ -2,7 +2,7 @@ const apiData = {
     info: {
         name: "Kickbase API Documentation",
         version: "12.0.0",
-        description: "Unofficial documentation of the Kickbase API",
+        description: "Unofficial documentation of the Kickbase API made by Kai Detmers",
         baseUrl: "https://api.kickbase.com"
     },
     endpoints: [
@@ -162,6 +162,83 @@ const apiData = {
                             }
                         }
                     }
+                },
+                {
+                    id: "get-settings",
+                    name: "Get Account Settings",
+                    method: "GET",
+                    path: "/v4/user/settings",
+                    description: "Retrieve user account settings",
+                    responses: {
+                        "200": {
+                            description: "Account settings retrieved",
+                            example: {
+                                email: "user@example.com",
+                                name: "Username",
+                                notifications: {
+                                    push: true,
+                                    email: false
+                                },
+                                preferences: {
+                                    language: "en",
+                                    theme: "light"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "update-settings",
+                    name: "Update Account Settings",
+                    method: "PUT",
+                    path: "/v4/user/settings",
+                    description: "Update user account settings",
+                    parameters: [
+                        {
+                            name: "settings",
+                            type: "object",
+                            required: true,
+                            description: "Updated settings object"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Settings updated successfully",
+                            example: {
+                                success: true,
+                                settings: {
+                                    notifications: {
+                                        push: true,
+                                        email: false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "set-profile-image",
+                    name: "Set Profile Image",
+                    method: "POST",
+                    path: "/v4/user/settings/image",
+                    description: "Upload a new profile image",
+                    parameters: [
+                        {
+                            name: "image",
+                            type: "file",
+                            required: true,
+                            description: "Profile image file"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Image uploaded successfully",
+                            example: {
+                                success: true,
+                                imageUrl: "https://example.com/avatars/user123.jpg"
+                            }
+                        }
+                    }
                 }
             ]
         },
@@ -292,6 +369,79 @@ const apiData = {
                             }
                         }
                     }
+                },
+                {
+                    id: "get-user-league-info",
+                    name: "Get User League Info",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/me",
+                    description: "Get current user's league information",
+                    responses: {
+                        "200": {
+                            description: "User league info retrieved",
+                            example: {
+                                userId: "user123",
+                                leagueId: "league123",
+                                role: "member",
+                                stats: {
+                                    points: 1250,
+                                    rank: 3,
+                                    budget: 150000000
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "get-league-activities",
+                    name: "Get League Activities Feed",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/activitiesFeed",
+                    description: "Get league activity feed",
+                    responses: {
+                        "200": {
+                            description: "League activities retrieved",
+                            example: {
+                                activities: [
+                                    {
+                                        id: "act123",
+                                        type: "TRANSFER",
+                                        timestamp: "2024-01-01T12:00:00Z",
+                                        user: {
+                                            id: "user123",
+                                            name: "Username"
+                                        },
+                                        details: {
+                                            player: "Player Name",
+                                            price: 15000000,
+                                            type: "BUY"
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "validate-invitation",
+                    name: "Validate Invitation Code",
+                    method: "GET",
+                    path: "/v4/invitations/{code}/validate",
+                    description: "Validate a league invitation code",
+                    responses: {
+                        "200": {
+                            description: "Invitation code validated",
+                            example: {
+                                valid: true,
+                                league: {
+                                    id: "league123",
+                                    name: "League Name",
+                                    memberCount: 5,
+                                    maxMembers: 8
+                                }
+                            }
+                        }
+                    }
                 }
             ]
         },
@@ -363,6 +513,145 @@ const apiData = {
                             }
                         }
                     }
+                },
+                {
+                    id: "get-player-details",
+                    name: "Get Player Details",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/players/{playerId}",
+                    description: "Get detailed player information",
+                    responses: {
+                        "200": {
+                            description: "Player details retrieved",
+                            example: {
+                                id: "player123",
+                                name: "Player Name",
+                                team: "Team Name",
+                                position: "FW",
+                                number: 9,
+                                status: "active",
+                                marketValue: 15000000,
+                                stats: {
+                                    points: 85,
+                                    form: 8.5,
+                                    gamesPlayed: 15,
+                                    goals: 10,
+                                    assists: 5
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "get-player-performance",
+                    name: "Get Player Performance",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/players/{playerId}/performance",
+                    description: "Get player performance statistics",
+                    responses: {
+                        "200": {
+                            description: "Player performance retrieved",
+                            example: {
+                                overall: {
+                                    points: 85,
+                                    averagePoints: 8.5,
+                                    form: 9.0
+                                },
+                                matches: [
+                                    {
+                                        matchday: 15,
+                                        points: 12,
+                                        events: ["GOAL", "ASSIST"]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "buy-player",
+                    name: "Buy Player",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/market/{playerId}/buy",
+                    description: "Purchase a player from the market",
+                    parameters: [
+                        {
+                            name: "price",
+                            type: "number",
+                            required: true,
+                            description: "Purchase price"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Player purchased successfully",
+                            example: {
+                                success: true,
+                                transaction: {
+                                    playerId: "player123",
+                                    price: 15000000,
+                                    timestamp: "2024-01-01T12:00:00Z"
+                                },
+                                newBalance: 35000000
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "sell-player",
+                    name: "Sell Player",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/market/{playerId}/sell",
+                    description: "Sell a player to the market",
+                    parameters: [
+                        {
+                            name: "price",
+                            type: "number",
+                            required: true,
+                            description: "Asking price"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Player listed for sale",
+                            example: {
+                                success: true,
+                                listing: {
+                                    playerId: "player123",
+                                    price: 15000000,
+                                    expiry: "2024-01-02T12:00:00Z"
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "place-bid",
+                    name: "Place Bid",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/market/{playerId}/bid",
+                    description: "Place a bid on a player",
+                    parameters: [
+                        {
+                            name: "amount",
+                            type: "number",
+                            required: true,
+                            description: "Bid amount"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Bid placed successfully",
+                            example: {
+                                success: true,
+                                bid: {
+                                    playerId: "player123",
+                                    amount: 15000000,
+                                    expires: "2024-01-01T14:00:00Z"
+                                }
+                            }
+                        }
+                    }
                 }
             ]
         },
@@ -425,6 +714,35 @@ const apiData = {
                                         },
                                         status: "FINISHED",
                                         date: "2024-01-01T15:30:00Z"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "live-match",
+                    name: "Get Live Match Data",
+                    method: "GET",
+                    path: "/v4/matches/{matchId}/live",
+                    description: "Get real-time match data",
+                    responses: {
+                        "200": {
+                            description: "Live match data retrieved",
+                            example: {
+                                matchId: "match123",
+                                status: "LIVE",
+                                minute: 65,
+                                score: {
+                                    home: 2,
+                                    away: 1
+                                },
+                                events: [
+                                    {
+                                        type: "GOAL",
+                                        minute: 23,
+                                        playerId: "player123",
+                                        points: 4
                                     }
                                 ]
                             }
@@ -558,6 +876,409 @@ const apiData = {
                                         points: -1
                                     }
                                 ]
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "support-mail",
+                    name: "Get Support Mail",
+                    method: "GET",
+                    path: "/v4/support/contactinfo",
+                    description: "Get support contact information",
+                    responses: {
+                        "200": {
+                            description: "Support contact info retrieved",
+                            example: {
+                                email: "support@kickbase.com",
+                                subject: "Support Request",
+                                additionalInfo: {
+                                    version: "12.0.0",
+                                    platform: "iOS"
+                                }
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            id: "challenge",
+            name: "Challenge",
+            description: "Endpoints for challenge management",
+            endpoints: [
+                {
+                    id: "challenge-overview",
+                    name: "Get Challenge Overview",
+                    method: "GET",
+                    path: "/v4/challenges/overview",
+                    description: "Get overview of available challenges",
+                    responses: {
+                        "200": {
+                            description: "Challenge overview retrieved",
+                            example: {
+                                active: [
+                                    {
+                                        id: "challenge123",
+                                        name: "Weekend Challenge",
+                                        type: "WEEKEND",
+                                        startDate: "2024-01-01T00:00:00Z",
+                                        endDate: "2024-01-03T00:00:00Z",
+                                        prizes: [
+                                            {
+                                                rank: 1,
+                                                amount: 100000
+                                            }
+                                        ]
+                                    }
+                                ],
+                                upcoming: []
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "join-challenge",
+                    name: "Join Challenge",
+                    method: "POST",
+                    path: "/v4/challenges/{challengeId}/join",
+                    description: "Join a challenge",
+                    responses: {
+                        "200": {
+                            description: "Successfully joined challenge",
+                            example: {
+                                success: true,
+                                challenge: {
+                                    id: "challenge123",
+                                    status: "JOINED",
+                                    position: 0
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "challenge-profile",
+                    name: "Get Challenge Profile",
+                    method: "GET",
+                    path: "/v4/challenges/{challengeId}/profile",
+                    description: "Get challenge profile information",
+                    responses: {
+                        "200": {
+                            description: "Challenge profile retrieved",
+                            example: {
+                                id: "challenge123",
+                                name: "Weekend Challenge",
+                                status: "ACTIVE",
+                                ranking: {
+                                    position: 5,
+                                    points: 150
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "challenge-lineup",
+                    name: "Get Challenge Lineup",
+                    method: "GET",
+                    path: "/v4/challenges/{challengeId}/lineup",
+                    description: "Get challenge lineup",
+                    responses: {
+                        "200": {
+                            description: "Challenge lineup retrieved",
+                            example: {
+                                formation: "4-4-2",
+                                players: [
+                                    {
+                                        position: "GK",
+                                        playerId: "player123",
+                                        name: "Goalkeeper Name"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "update-challenge-lineup",
+                    name: "Update Challenge Lineup",
+                    method: "PUT",
+                    path: "/v4/challenges/{challengeId}/lineup",
+                    description: "Update challenge lineup",
+                    parameters: [
+                        {
+                            name: "lineup",
+                            type: "object",
+                            required: true,
+                            description: "New lineup configuration"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Lineup updated successfully",
+                            example: {
+                                success: true,
+                                lineup: {
+                                    formation: "4-4-2",
+                                    players: [
+                                        {
+                                            position: "GK",
+                                            playerId: "player123"
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "challenge-live-pitch",
+                    name: "Get Challenge Live Pitch",
+                    method: "GET",
+                    path: "/v4/challenges/{challengeId}/lineup/livepitch",
+                    description: "Get live pitch information",
+                    responses: {
+                        "200": {
+                            description: "Live pitch data retrieved",
+                            example: {
+                                players: [
+                                    {
+                                        playerId: "player123",
+                                        points: 8,
+                                        events: ["GOAL"]
+                                    }
+                                ],
+                                totalPoints: 45
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "reset-challenge-lineup",
+                    name: "Reset Challenge Lineup",
+                    method: "POST",
+                    path: "/v4/challenges/{challengeId}/lineup/clear",
+                    description: "Reset challenge lineup",
+                    responses: {
+                        "200": {
+                            description: "Lineup reset successfully",
+                            example: {
+                                success: true
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            id: "admin",
+            name: "Admin",
+            description: "Administrative endpoints for league management",
+            endpoints: [
+                {
+                    id: "get-league-settings",
+                    name: "Get League Settings",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/settings",
+                    description: "Get league settings",
+                    responses: {
+                        "200": {
+                            description: "League settings retrieved",
+                            example: {
+                                name: "League Name",
+                                type: "private",
+                                maxMembers: 8,
+                                settings: {
+                                    transferMarket: true,
+                                    challenges: true
+                                }
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "save-league-settings",
+                    name: "Save League Settings",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/settings",
+                    description: "Save league settings",
+                    parameters: [
+                        {
+                            name: "settings",
+                            type: "object",
+                            required: true,
+                            description: "Updated league settings"
+                        }
+                    ],
+                    responses: {
+                        "200": {
+                            description: "Settings saved successfully",
+                            example: {
+                                success: true
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "get-managers",
+                    name: "Get Managers",
+                    method: "GET",
+                    path: "/v4/leagues/{leagueId}/settings/managers",
+                    description: "Get league managers",
+                    responses: {
+                        "200": {
+                            description: "Managers retrieved",
+                            example: {
+                                managers: [
+                                    {
+                                        id: "user123",
+                                        name: "Manager Name",
+                                        role: "ADMIN"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "reset-league",
+                    name: "Reset League",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/reset",
+                    description: "Reset entire league",
+                    responses: {
+                        "200": {
+                            description: "League reset successfully",
+                            example: {
+                                success: true
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "reset-team",
+                    name: "Reset Team",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/resetteams",
+                    description: "Reset team in league",
+                    responses: {
+                        "200": {
+                            description: "Team reset successfully",
+                            example: {
+                                success: true
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "unlock-matchday",
+                    name: "Unlock Matchday Points",
+                    method: "POST",
+                    path: "/v4/leagues/{leagueId}/users/{userId}/unlock",
+                    description: "Unlock matchday points for user",
+                    responses: {
+                        "200": {
+                            description: "Points unlocked successfully",
+                            example: {
+                                success: true,
+                                points: 85
+                            }
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            id: "news",
+            name: "News",
+            description: "Endpoints for news and content",
+            endpoints: [
+                {
+                    id: "base-overview",
+                    name: "Get Base Overview",
+                    method: "GET",
+                    path: "/v4/base/overview",
+                    description: "Get news overview",
+                    responses: {
+                        "200": {
+                            description: "News overview retrieved",
+                            example: {
+                                sections: [
+                                    {
+                                        id: "section123",
+                                        name: "Latest News",
+                                        items: [
+                                            {
+                                                id: "news123",
+                                                title: "News Title",
+                                                preview: "News preview text"
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "section-items",
+                    name: "Get Base Section Items",
+                    method: "GET",
+                    path: "/v4/base/sections/{sectionId}/items",
+                    description: "Get items in a news section",
+                    responses: {
+                        "200": {
+                            description: "Section items retrieved",
+                            example: {
+                                items: [
+                                    {
+                                        id: "news123",
+                                        title: "News Title",
+                                        content: "Full news content",
+                                        date: "2024-01-01T12:00:00Z"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "news-detail",
+                    name: "Get News Detail",
+                    method: "GET",
+                    path: "/v4/base/items/{itemId}",
+                    description: "Get detailed news item",
+                    responses: {
+                        "200": {
+                            description: "News detail retrieved",
+                            example: {
+                                id: "news123",
+                                title: "News Title",
+                                content: "Full news content",
+                                author: "Author Name",
+                                date: "2024-01-01T12:00:00Z",
+                                images: [
+                                    {
+                                        url: "https://example.com/image.jpg",
+                                        caption: "Image caption"
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                },
+                {
+                    id: "track-news-click",
+                    name: "Track News Item Clicked",
+                    method: "POST",
+                    path: "/v4/base/items/{itemId}/click",
+                    description: "Track when a news item is clicked",
+                    responses: {
+                        "200": {
+                            description: "Click tracked successfully",
+                            example: {
+                                success: true
                             }
                         }
                     }
