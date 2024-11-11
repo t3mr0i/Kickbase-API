@@ -29,3 +29,4 @@ To add or modify API endpoints, edit the `docs/js/api-data.js` file.
 
 MIT
 
+thanks to @kevinskyba for the original Postman collection and enabling the community to work on alternative clients. You are awesome.
