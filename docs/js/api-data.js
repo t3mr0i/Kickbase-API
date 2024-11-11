@@ -33,27 +33,10 @@ const apiData = {
                     ],
                     responses: {
                         "200": {
-                            description: "Successful authentication",
-                            example: {
-                                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
-                                user: {
-                                    id: "12345",
-                                    email: "user@example.com",
-                                    name: "Username",
-                                    profile: {
-                                        avatar: "https://example.com/avatar.jpg",
-                                        level: 10,
-                                        created: "2023-01-01T00:00:00Z"
-                                    }
-                                }
-                            }
+                            description: "Successful authentication"
                         },
                         "401": {
-                            description: "Invalid credentials",
-                            example: {
-                                error: "Invalid email or password",
-                                code: "AUTH_FAILED"
-                            }
+                            description: "Invalid credentials"
                         }
                     }
                 },
@@ -85,13 +68,7 @@ const apiData = {
                     ],
                     responses: {
                         "201": {
-                            description: "Successfully registered",
-                            example: {
-                                userId: "12345",
-                                email: "user@example.com",
-                                name: "Username",
-                                token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                            }
+                            description: "Successfully registered"
                         }
                     }
                 },
@@ -111,11 +88,7 @@ const apiData = {
                     ],
                     responses: {
                         "200": {
-                            description: "Password reset email sent",
-                            example: {
-                                success: true,
-                                message: "Reset instructions sent to email"
-                            }
+                            description: "Password reset email sent"
                         }
                     }
                 },
@@ -141,10 +114,7 @@ const apiData = {
                     ],
                     responses: {
                         "200": {
-                            description: "Password changed successfully",
-                            example: {
-                                success: true
-                            }
+                            description: "Password changed successfully"
                         }
                     }
                 },
@@ -156,10 +126,7 @@ const apiData = {
                     description: "Delete user account",
                     responses: {
                         "200": {
-                            description: "Account deleted successfully",
-                            example: {
-                                success: true
-                            }
+                            description: "Account deleted successfully"
                         }
                     }
                 },
@@ -171,19 +138,7 @@ const apiData = {
                     description: "Retrieve user account settings",
                     responses: {
                         "200": {
-                            description: "Account settings retrieved",
-                            example: {
-                                email: "user@example.com",
-                                name: "Username",
-                                notifications: {
-                                    push: true,
-                                    email: false
-                                },
-                                preferences: {
-                                    language: "en",
-                                    theme: "light"
-                                }
-                            }
+                            description: "Account settings retrieved"
                         }
                     }
                 },
@@ -203,16 +158,7 @@ const apiData = {
                     ],
                     responses: {
                         "200": {
-                            description: "Settings updated successfully",
-                            example: {
-                                success: true,
-                                settings: {
-                                    notifications: {
-                                        push: true,
-                                        email: false
-                                    }
-                                }
-                            }
+                            description: "Settings updated successfully"
                         }
                     }
                 },
@@ -232,11 +178,7 @@ const apiData = {
                     ],
                     responses: {
                         "200": {
-                            description: "Image uploaded successfully",
-                            example: {
-                                success: true,
-                                imageUrl: "https://example.com/avatars/user123.jpg"
-                            }
+                            description: "Image uploaded successfully"
                         }
                     }
                 }
@@ -275,18 +217,7 @@ const apiData = {
                     ],
                     responses: {
                         "201": {
-                            description: "League created successfully",
-                            example: {
-                                id: "league123",
-                                name: "My League",
-                                type: "private",
-                                maxMembers: 8,
-                                creator: {
-                                    id: "user123",
-                                    name: "Creator Name"
-                                },
-                                inviteCode: "ABC123"
-                            }
+                            description: "League created successfully"
                         }
                     }
                 },
@@ -298,16 +229,7 @@ const apiData = {
                     description: "Join a public league",
                     responses: {
                         "200": {
-                            description: "Successfully joined league",
-                            example: {
-                                success: true,
-                                league: {
-                                    id: "league123",
-                                    name: "League Name",
-                                    memberCount: 5,
-                                    maxMembers: 8
-                                }
-                            }
+                            description: "Successfully joined league"
                         }
                     }
                 },
@@ -327,17 +249,7 @@ const apiData = {
                     ],
                     responses: {
                         "200": {
-                            description: "Successfully joined private league",
-                            example: {
-                                success: true,
-                                league: {
-                                    id: "league123",
-                                    name: "Private League",
-                                    type: "private",
-                                    memberCount: 5,
-                                    maxMembers: 8
-                                }
-                            }
+                            description: "Successfully joined private league"
                         }
                     }
                 },
@@ -349,24 +261,7 @@ const apiData = {
                     description: "Get preview data for a league",
                     responses: {
                         "200": {
-                            description: "League preview data retrieved",
-                            example: {
-                                id: "league123",
-                                name: "League Name",
-                                type: "public",
-                                season: "2023/24",
-                                members: {
-                                    current: 6,
-                                    max: 8
-                                },
-                                topPlayers: [
-                                    {
-                                        userId: "user123",
-                                        name: "Top Player",
-                                        points: 1500
-                                    }
-                                ]
-                            }
+                            description: "League preview data retrieved"
                         }
                     }
                 },
@@ -378,17 +273,7 @@ const apiData = {
                     description: "Get current user's league information",
                     responses: {
                         "200": {
-                            description: "User league info retrieved",
-                            example: {
-                                userId: "user123",
-                                leagueId: "league123",
-                                role: "member",
-                                stats: {
-                                    points: 1250,
-                                    rank: 3,
-                                    budget: 150000000
-                                }
-                            }
+                            description: "User league info retrieved"
                         }
                     }
                 },
@@ -400,25 +285,7 @@ const apiData = {
                     description: "Get league activity feed",
                     responses: {
                         "200": {
-                            description: "League activities retrieved",
-                            example: {
-                                activities: [
-                                    {
-                                        id: "act123",
-                                        type: "TRANSFER",
-                                        timestamp: "2024-01-01T12:00:00Z",
-                                        user: {
-                                            id: "user123",
-                                            name: "Username"
-                                        },
-                                        details: {
-                                            player: "Player Name",
-                                            price: 15000000,
-                                            type: "BUY"
-                                        }
-                                    }
-                                ]
-                            }
+                            description: "League activities retrieved"
                         }
                     }
                 },
